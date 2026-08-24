@@ -23,6 +23,8 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 import com.example.puzzlegame.audio.AudioManager
+import com.example.puzzlegame.theme.FlagRed
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +80,8 @@ fun GameSelectionScreen(
             },
             containerColor = Color.Transparent
         ) { paddingValues ->
+            var selectedTab by remember { mutableStateOf(0) }
+
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -86,56 +90,228 @@ fun GameSelectionScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 if (selectedGameType == null) {
-                    // Màn hình chọn Grid 4 Game
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.weight(1f)
+                    TabRow(
+                        selectedTabIndex = selectedTab,
+                        containerColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        indicator = { tabPositions ->
+                            TabRowDefaults.SecondaryIndicator(
+                                Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                                color = FlagRed
+                            )
+                        }
                     ) {
-                        item {
-                            GameCard(
-                                title = "2048",
-                                description = "Trượt gộp ô số",
-                                color = MaterialTheme.colorScheme.primary,
-                                onClick = {
-                                    audioManager.playClick()
-                                    selectedGameType = "2048"
+                        Tab(
+                            selected = selectedTab == 0,
+                            onClick = {
+                                audioManager.playClick()
+                                selectedTab = 0
+                            },
+                            text = { Text("Quốc Tế", fontWeight = FontWeight.Bold) }
+                        )
+                        Tab(
+                            selected = selectedTab == 1,
+                            onClick = {
+                                audioManager.playClick()
+                                selectedTab = 1
+                            },
+                            text = { Text("Dân Gian", fontWeight = FontWeight.Bold) }
+                        )
+                        Tab(
+                            selected = selectedTab == 2,
+                            onClick = {
+                                audioManager.playClick()
+                                selectedTab = 2
+                            },
+                            text = { Text("Trí Tuệ", fontWeight = FontWeight.Bold) }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    when (selectedTab) {
+                        0 -> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                item {
+                                    GameCard(
+                                        title = "2048",
+                                        description = "Trượt gộp ô số",
+                                        color = MaterialTheme.colorScheme.primary,
+                                        onClick = {
+                                            audioManager.playClick()
+                                            selectedGameType = "2048"
+                                        }
+                                    )
                                 }
-                            )
+                                item {
+                                    GameCard(
+                                        title = "SUDOKU",
+                                        description = "Điền số logic 9x9",
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        onClick = {
+                                            audioManager.playClick()
+                                            selectedGameType = "SUDOKU"
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "SOKOBAN",
+                                        description = "Đẩy hộp vào kho",
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlaySokoban(-1))
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "NONOGRAM",
+                                        description = "Giải đố tô tranh pixel",
+                                        color = Color(0xFF10B981),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayNonogram(-1))
+                                        }
+                                    )
+                                }
+                            }
                         }
-                        item {
-                            GameCard(
-                                title = "SUDOKU",
-                                description = "Điền số logic 9x9",
-                                color = MaterialTheme.colorScheme.secondary,
-                                onClick = {
-                                    audioManager.playClick()
-                                    selectedGameType = "SUDOKU"
+
+                        1 -> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                item {
+                                    GameCard(
+                                        title = "Ô ĂN QUAN",
+                                        description = "Rải sỏi ăn dân & quan",
+                                        color = Color(0xFFD84315),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayOAnQuan)
+                                        }
+                                    )
                                 }
-                            )
+                                item {
+                                    GameCard(
+                                        title = "CỜ GÁNH",
+                                        description = "Vây chẹt đổi màu cờ",
+                                        color = Color(0xFF2E7D32),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayCoGanh)
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "RỒNG RẮN",
+                                        description = "Uốn lượn ngậm ngọc rồng",
+                                        color = Color(0xFFF57F17),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayDragonSnake)
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "NHẢY LÒ CÒ",
+                                        description = "Nhảy ô lò cò 1-9",
+                                        color = Color(0xFFAD1457),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayLofo)
+                                        }
+                                    )
+                                }
+                            }
                         }
-                        item {
-                            GameCard(
-                                title = "SOKOBAN",
-                                description = "Đẩy hộp vào kho",
-                                color = MaterialTheme.colorScheme.tertiary,
-                                onClick = {
-                                    audioManager.playClick()
-                                    onNavigate(PlaySokoban(-1))
+
+                        2 -> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                item {
+                                    GameCard(
+                                        title = "THẢ ĐỈA",
+                                        description = "Lội sông né đỉa đuổi bám",
+                                        color = Color(0xFF00838F),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayThaSua)
+                                        }
+                                    )
                                 }
-                            )
-                        }
-                        item {
-                            GameCard(
-                                title = "NONOGRAM",
-                                description = "Giải đố tô tranh pixel",
-                                color = Color(0xFF10B981), // Emerald
-                                onClick = {
-                                    audioManager.playClick()
-                                    onNavigate(PlayNonogram(-1))
+                                item {
+                                    GameCard(
+                                        title = "BẮT DÊ",
+                                        description = "Dò tìm dê ẩn nấp",
+                                        color = Color(0xFF4E342E),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayBitMatDe)
+                                        }
+                                    )
                                 }
-                            )
+                                item {
+                                    GameCard(
+                                        title = "ĐỐ CHỮ",
+                                        description = "Tìm ô chữ ẩm thực Việt",
+                                        color = Color(0xFF283593),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayWordPuzzle)
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "CHƠI CHUYỀN",
+                                        description = "Chuỗi nhấp nháy hạt gỗ",
+                                        color = Color(0xFF37474F),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlaySequence)
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "ĐẬP NIÊU",
+                                        description = "Đập niêu đất bằng suy luận",
+                                        color = Color(0xFFEF6C00),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayDapNieu)
+                                        }
+                                    )
+                                }
+                                item {
+                                    GameCard(
+                                        title = "NÉM CÒN",
+                                        description = "Ném còn bay chịu sức gió",
+                                        color = Color(0xFFC2185B),
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayNemCon)
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 } else {

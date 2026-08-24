@@ -94,6 +94,13 @@ fun PlayNonogramScreen(
                 prefs.clearContinueGame()
                 prefs.saveScore("nonogram_level_$currentLevel", score)
 
+                val winKey = "nonogram_win_credited_$currentLevel"
+                val alreadyCredited = prefs.getHighScore(winKey) > 0
+                if (!alreadyCredited) {
+                    prefs.addXpAndCoins(100, 20)
+                    prefs.saveScore(winKey, 1)
+                }
+
                 // Mở khóa màn tiếp theo
                 if (currentLevel == unlockedLevel && currentLevel < 15) {
                     unlockedLevel = currentLevel + 1

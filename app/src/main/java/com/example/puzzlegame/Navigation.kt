@@ -72,6 +72,50 @@ fun MainNavigation(
                     onBack = { backStack.removeLastOrNull() }
                 )
             }
+            // 9. Màn chơi Ô ăn quan
+            entry<PlayOAnQuan> {
+                PlayOAnQuanScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 10. Màn chơi Cờ gánh
+            entry<PlayCoGanh> {
+                PlayCoGanhScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 11. Màn chơi Rồng rắn lên mây
+            entry<PlayDragonSnake> {
+                PlayDragonSnakeScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 12. Màn chơi Nhảy lò cò
+            entry<PlayLofo> {
+                PlayLofoScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 13. Màn chơi Thả đỉa ba ba
+            entry<PlayThaSua> {
+                PlayThaSuaScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 14. Màn chơi Bịt mắt bắt dê
+            entry<PlayBitMatDe> {
+                PlayBitMatDeScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 15. Màn chơi Câu đố chữ
+            entry<PlayWordPuzzle> {
+                PlayWordPuzzleScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 16. Màn chơi Chơi chuyền
+            entry<PlaySequence> {
+                PlaySequenceScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 17. Màn chơi Đập niêu
+            entry<PlayDapNieu> {
+                PlayDapNieuScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 18. Màn chơi Ném còn
+            entry<PlayNemCon> {
+                PlayNemConScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 19. Màn Bảo tàng Hồn Việt
+            entry<Museum> {
+                MuseumScreen(onBack = { backStack.removeLastOrNull() })
+            }
         }
     )
 }

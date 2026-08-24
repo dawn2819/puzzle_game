@@ -37,6 +37,48 @@ class GamePreferences(context: Context) {
         get() = prefs.getInt("nonogram_unlocked_level", 1)
         set(value) = prefs.edit().putInt("nonogram_unlocked_level", value).apply()
 
+    // --- Shared Profile System ---
+    var profileLevel: Int
+        get() = prefs.getInt("profile_level", 1)
+        set(value) = prefs.edit().putInt("profile_level", value).apply()
+
+    var profileXp: Int
+        get() = prefs.getInt("profile_xp", 0)
+        set(value) = prefs.edit().putInt("profile_xp", value).apply()
+
+    var profileCoins: Int
+        get() = prefs.getInt("profile_coins", 0)
+        set(value) = prefs.edit().putInt("profile_coins", value).apply()
+
+    var profileStreak: Int
+        get() = prefs.getInt("profile_streak", 0)
+        set(value) = prefs.edit().putInt("profile_streak", value).apply()
+
+    var unlockedCollectionIds: Set<String>
+        get() = prefs.getStringSet("unlocked_collection_ids", emptySet()) ?: emptySet()
+        set(value) = prefs.edit().putStringSet("unlocked_collection_ids", value).apply()
+
+    var unlockedAchievements: Set<String>
+        get() = prefs.getStringSet("unlocked_achievements", emptySet()) ?: emptySet()
+        set(value) = prefs.edit().putStringSet("unlocked_achievements", value).apply()
+
+    fun addXpAndCoins(xpGained: Int, coinsGained: Int): Boolean {
+        var currentLevel = profileLevel
+        var currentXp = profileXp + xpGained
+        profileCoins = profileCoins + coinsGained
+        
+        var leveledUp = false
+        while (currentXp >= currentLevel * 1000) {
+            currentXp -= currentLevel * 1000
+            currentLevel++
+            leveledUp = true
+        }
+        
+        profileLevel = currentLevel
+        profileXp = currentXp
+        return leveledUp
+    }
+
     // --- Scores ---
     fun getHighScore(gameKey: String): Int {
         return prefs.getInt("highscore_$gameKey", 0)

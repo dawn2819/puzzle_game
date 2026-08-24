@@ -234,6 +234,7 @@ fun Play2048Screen(
         if (engine.hasReached2048 && !celebrated2048) {
             show2048Celebration = true
             celebrated2048 = true
+            prefs.addXpAndCoins(200, 50) // +200 XP, +50 Coins cho siêu kỷ lục
         }
 
         // Cập nhật điểm cao tức thời nếu vượt qua

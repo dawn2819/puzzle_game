@@ -128,6 +128,13 @@ fun PlaySokobanScreen(
                 prefs.clearContinueGame()
                 prefs.saveScore("sokoban_level_$currentLevel", score)
 
+                val winKey = "sokoban_win_credited_$currentLevel"
+                val alreadyCredited = prefs.getHighScore(winKey) > 0
+                if (!alreadyCredited) {
+                    prefs.addXpAndCoins(100, 20)
+                    prefs.saveScore(winKey, 1)
+                }
+
                 // Cập nhật tiến trình mở khóa
                 if (currentLevel == unlockedLevel) {
                     if (currentLevel < 18) {

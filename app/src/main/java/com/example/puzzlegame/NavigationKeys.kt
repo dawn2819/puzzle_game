@@ -19,3 +19,15 @@ data class PlaySokoban(val levelIndex: Int, val isRestore: Boolean = false) : Na
 
 @Serializable
 data class PlayNonogram(val levelIndex: Int, val isRestore: Boolean = false) : NavKey
+
+@Serializable data object PlayOAnQuan : NavKey
+@Serializable data object PlayCoGanh : NavKey
+@Serializable data object PlayDragonSnake : NavKey
+@Serializable data object PlayLofo : NavKey
+@Serializable data object PlayThaSua : NavKey
+@Serializable data object PlayBitMatDe : NavKey
+@Serializable data object PlayWordPuzzle : NavKey
+@Serializable data object PlaySequence : NavKey
+@Serializable data object PlayDapNieu : NavKey
+@Serializable data object PlayNemCon : NavKey
+@Serializable data object Museum : NavKey

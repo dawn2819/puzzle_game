@@ -1,16 +1,23 @@
 package com.example.puzzlegame.ui
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,11 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.example.puzzlegame.*
+import com.example.puzzlegame.audio.AudioManager
 import com.example.puzzlegame.data.GamePreferences
+import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
-import com.example.puzzlegame.audio.AudioManager
-import com.example.puzzlegame.theme.StarGold
 
 @Composable
 fun MainMenuScreen(
@@ -34,45 +41,51 @@ fun MainMenuScreen(
     val audioManager = remember { AudioManager(context).apply { volume = prefs.volume } }
 
     var hasContinue by remember { mutableStateOf(prefs.hasContinueGame()) }
+    var coins by remember { mutableStateOf(prefs.profileCoins) }
+    var level by remember { mutableStateOf(prefs.profileLevel) }
+    var xp by remember { mutableStateOf(prefs.profileXp) }
+    val xpTarget = level * 1000
 
-    // Hoạt ảnh xuất hiện tuần tự (Staggered Entrance)
+    // Cập nhật chỉ số mỗi khi vào lại màn hình chính
+    LaunchedEffect(Unit) {
+        hasContinue = prefs.hasContinueGame()
+        coins = prefs.profileCoins
+        level = prefs.profileLevel
+        xp = prefs.profileXp
+    }
+
+    // Hoạt ảnh xuất hiện
     var showMenu by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         showMenu = true
     }
 
-    val b1Alpha by animateFloatAsState(targetValue = if (showMenu) 1f else 0f, animationSpec = tween(500, delayMillis = 100), label = "b1_a")
-    val b1Offset by animateFloatAsState(targetValue = if (showMenu) 0f else 30f, animationSpec = tween(500, delayMillis = 100), label = "b1_o")
+    val entranceAlpha by animateFloatAsState(
+        targetValue = if (showMenu) 1f else 0f,
+        animationSpec = tween(600),
+        label = "entrance_alpha"
+    )
 
-    val b2Alpha by animateFloatAsState(targetValue = if (showMenu) 1f else 0f, animationSpec = tween(500, delayMillis = 200), label = "b2_a")
-    val b2Offset by animateFloatAsState(targetValue = if (showMenu) 0f else 30f, animationSpec = tween(500, delayMillis = 200), label = "b2_o")
-
-    val b3Alpha by animateFloatAsState(targetValue = if (showMenu) 1f else 0f, animationSpec = tween(500, delayMillis = 300), label = "b3_a")
-    val b3Offset by animateFloatAsState(targetValue = if (showMenu) 0f else 30f, animationSpec = tween(500, delayMillis = 300), label = "b3_o")
-
-    val b4Alpha by animateFloatAsState(targetValue = if (showMenu) 1f else 0f, animationSpec = tween(500, delayMillis = 400), label = "b4_a")
-    val b4Offset by animateFloatAsState(targetValue = if (showMenu) 0f else 30f, animationSpec = tween(500, delayMillis = 400), label = "b4_o")
-
-    // Hiệu ứng scale động cho logo
-    val infiniteTransition = rememberInfiniteTransition(label = "logo_scale")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 0.96f,
-        targetValue = 1.04f,
+    // Hiệu ứng bập bùng nhẹ của tiêu đề
+    val infiniteTransition = rememberInfiniteTransition(label = "title_animation")
+    val titleScale by infiniteTransition.animateFloat(
+        initialValue = 0.97f,
+        targetValue = 1.03f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = EaseInOutSine),
+            animation = tween(2500, easing = EaseInOutSine),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "logo_scale"
+        label = "title_scale"
     )
 
     val glowAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.8f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = EaseInOutSine),
+            animation = tween(2000, easing = EaseInOutSine),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "logo_glow"
+        label = "title_glow"
     )
 
     DisposableEffect(Unit) {
@@ -86,60 +99,47 @@ fun MainMenuScreen(
             modifier = modifier
                 .fillMaxSize()
                 .safeContentPadding()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+                .graphicsLayer(alpha = entranceAlpha),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Title Logo
+            // --- LOGO TIÊU ĐỀ ---
             Column(
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
-                    .scale(scale),
-                verticalArrangement = Arrangement.Center,
+                    .padding(vertical = 12.dp)
+                    .scale(titleScale),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "TRÒ CHƠI",
-                    fontSize = 44.sp,
+                    text = "HỒN VIỆT",
+                    fontSize = 42.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = FlagRed,
                     textAlign = TextAlign.Center,
-                    letterSpacing = 6.sp,
+                    letterSpacing = 4.sp,
                     style = LocalTextStyle.current.copy(
                         shadow = Shadow(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = glowAlpha),
+                            color = FlagRed.copy(alpha = glowAlpha),
                             offset = Offset(0f, 0f),
-                            blurRadius = 35f
+                            blurRadius = 30f
                         )
                     )
                 )
                 Text(
-                    text = "DÂN GIAN",
-                    fontSize = 32.sp,
+                    text = "Vietnamese Puzzle Universe",
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF626200), // Star Gold Olive/Secondary color in Light theme
+                    color = EarthyBrown.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,
-                    letterSpacing = 10.sp,
-                    style = LocalTextStyle.current.copy(
-                        shadow = Shadow(
-                            color = StarGold.copy(alpha = glowAlpha),
-                            offset = Offset(0f, 0f),
-                            blurRadius = 25f
-                        )
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Trí Tuệ Việt",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
+                    letterSpacing = 2.sp
                 )
             }
 
-              GlassCard(
+            // --- PROFILE USER CARD (XP, COINS, LEVEL) ---
+            GlassCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -147,102 +147,235 @@ fun MainMenuScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Play Button
-                    Button(
-                        onClick = {
-                            audioManager.playClick()
-                            onNavigate(SelectGame)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .graphicsLayer(alpha = b1Alpha, translationY = b1Offset),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("PLAY", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    }
-
-                    // Continue Button
-                    Button(
-                        onClick = {
-                            audioManager.playClick()
-                            val type = prefs.getContinueGameType()
-                            val data = prefs.getContinueGameData()
-                            if (type != null && data != null) {
-                                when (type) {
-                                    "2048" -> {
-                                        val size = data.substringBefore("|").toInt()
-                                        onNavigate(Play2048(size, isRestore = true))
-                                    }
-                                    "SUDOKU" -> {
-                                        val difficulty = data.substringBefore("|")
-                                        onNavigate(PlaySudoku(difficulty, isRestore = true))
-                                    }
-                                    "SOKOBAN" -> {
-                                        val levelIndex = data.substringBefore("|").toInt()
-                                        onNavigate(PlaySokoban(levelIndex, isRestore = true))
-                                    }
-                                    "NONOGRAM" -> {
-                                        val levelIndex = data.substringBefore("|").toInt()
-                                        onNavigate(PlayNonogram(levelIndex, isRestore = true))
-                                    }
-                                }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .background(FlagRed, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "$level",
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 16.sp,
+                                    color = Color.White
+                                )
                             }
-                        },
-                        enabled = hasContinue,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .graphicsLayer(alpha = b2Alpha, translationY = b2Offset),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
-                        )
-                    ) {
-                        Text("CONTINUE", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                Text("Cấp độ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                                Text("Kẻ Sĩ Trí Tuệ", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = EarthyBrown)
+                            }
+                        }
+
+                        // Vàng
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(StarGold.copy(alpha = 0.3f))
+                                .border(1.dp, StarGold, RoundedCornerShape(16.dp))
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "$coins 🪙",
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 15.sp,
+                                color = EarthyBrown
+                            )
+                        }
                     }
 
-                    // Score Button
-                    OutlinedButton(
-                        onClick = {
-                            audioManager.playClick()
-                            onNavigate(Scores)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .graphicsLayer(alpha = b3Alpha, translationY = b3Offset),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
+                    // XP Progress bar
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Điểm kinh nghiệm (XP)", fontSize = 12.sp, color = EarthyBrown)
+                            Text("$xp / $xpTarget XP", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = FlagRed)
+                        }
+                        LinearProgressIndicator(
+                            progress = xp.toFloat() / xpTarget,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(CircleShape),
+                            color = FlagRed,
+                            trackColor = OutlineBrown.copy(alpha = 0.2f)
                         )
-                    ) {
-                        Text("SCORE", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    }
-
-                    // Option Button
-                    OutlinedButton(
-                        onClick = {
-                            audioManager.playClick()
-                            onNavigate(Options)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .graphicsLayer(alpha = b4Alpha, translationY = b4Offset),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        )
-                    ) {
-                        Text("OPTION", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
+
+            // --- NÚT CHƠI TIẾP (Nếu có trận dở dang) ---
+            if (hasContinue) {
+                Button(
+                    onClick = {
+                        audioManager.playClick()
+                        val type = prefs.getContinueGameType()
+                        val data = prefs.getContinueGameData()
+                        if (type != null && data != null) {
+                            when (type) {
+                                "2048" -> {
+                                    val size = data.substringBefore("|").toInt()
+                                    onNavigate(Play2048(size, isRestore = true))
+                                }
+                                "SUDOKU" -> {
+                                    val difficulty = data.substringBefore("|")
+                                    onNavigate(PlaySudoku(difficulty, isRestore = true))
+                                }
+                                "SOKOBAN" -> {
+                                    val levelIndex = data.substringBefore("|").toInt()
+                                    onNavigate(PlaySokoban(levelIndex, isRestore = true))
+                                }
+                                "NONOGRAM" -> {
+                                    val levelIndex = data.substringBefore("|").toInt()
+                                    onNavigate(PlayNonogram(levelIndex, isRestore = true))
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .shadow(4.dp, RoundedCornerShape(12.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = StarGold)
+                ) {
+                    Text(
+                        text = "⏳ CHƠI TIẾP VÁN DỞ DANG (" + prefs.getContinueGameType() + ")",
+                        fontWeight = FontWeight.ExtraBold,
+                        color = EarthyBrown,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+
+            // --- BENTO GRID MÀN HÌNH CHÍNH ---
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Hàng 1: CHƠI GAME & BẢO TÀNG DI SẢN (Bento lớn)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Bento 1: Game Selection
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(SurfaceNormal)
+                            .border(2.dp, OutlineBrown, RoundedCornerShape(20.dp))
+                            .clickable {
+                                audioManager.playClick()
+                                onNavigate(SelectGame)
+                            }
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("🧠", fontSize = 44.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("TRÒ CHƠI", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = FlagRed)
+                            Text("Hệ sinh thái game", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                        }
+                    }
+
+                    // Bento 2: Bảo tàng di sản
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(SurfaceNormal)
+                            .border(2.dp, BambooGreen, RoundedCornerShape(20.dp))
+                            .clickable {
+                                audioManager.playClick()
+                                onNavigate(Museum)
+                            }
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("🏯", fontSize = 44.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("BẢO TÀNG", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = BambooGreen)
+                            Text("Khám phá văn hóa", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                        }
+                    }
+                }
+
+                // Hàng 2: ĐIỂM SỐ & CÀI ĐẶT (Bento nhỏ hơn)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Bento 3: Scores
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(80.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(SurfaceNormal)
+                            .border(1.5.dp, OutlineBrown, RoundedCornerShape(16.dp))
+                            .clickable {
+                                audioManager.playClick()
+                                onNavigate(Scores)
+                            }
+                            .padding(12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("🏆", fontSize = 24.sp)
+                            Column {
+                                Text("BẢNG ĐIỂM", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
+                                Text("Thành tích cá nhân", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            }
+                        }
+                    }
+
+                    // Bento 4: Options
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(80.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(SurfaceNormal)
+                            .border(1.5.dp, OutlineBrown, RoundedCornerShape(16.dp))
+                            .clickable {
+                                audioManager.playClick()
+                                onNavigate(Options)
+                            }
+                            .padding(12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("⚙️", fontSize = 24.sp)
+                            Column {
+                                Text("CÀI ĐẶT", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
+                                Text("Âm lượng & Giao diện", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            }
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }

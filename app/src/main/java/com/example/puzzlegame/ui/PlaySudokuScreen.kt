@@ -95,6 +95,22 @@ fun PlaySudokuScreen(
             prefs.clearContinueGame()
             if (isVictory) {
                 prefs.saveScore("sudoku_$currentDifficulty", score)
+                val winKey = "sudoku_win_credited_${currentDifficulty}_${engine.score}"
+                val alreadyCredited = prefs.getHighScore(winKey) > 0
+                if (!alreadyCredited) {
+                    val xpGained = when (currentDifficulty) {
+                        "EASY" -> 50
+                        "MEDIUM" -> 150
+                        else -> 300
+                    }
+                    val coinsGained = when (currentDifficulty) {
+                        "EASY" -> 10
+                        "MEDIUM" -> 30
+                        else -> 60
+                    }
+                    prefs.addXpAndCoins(xpGained, coinsGained)
+                    prefs.saveScore(winKey, 1)
+                }
             }
         }
     }
