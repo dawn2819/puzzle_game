@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nonogram - Trò Chơi Dân Gian</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#f3edde",
+                    "on-secondary-container": "#666600",
+                    "surface-container-highest": "#e8e2d3",
+                    "inverse-primary": "#ffb4a9",
+                    "tertiary": "#3e6137",
+                    "outline": "#916f6a",
+                    "surface-bright": "#fff9ea",
+                    "tertiary-container": "#557a4e",
+                    "on-tertiary-fixed": "#012202",
+                    "outline-variant": "#e6bdb7",
+                    "surface": "#fff9ea",
+                    "on-tertiary": "#ffffff",
+                    "primary-container": "#da251d",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#eee8d9",
+                    "background": "#fff9ea",
+                    "on-tertiary-container": "#e1ffd5",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dfdacb",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#bf080b",
+                    "primary-fixed": "#ffdad5",
+                    "secondary": "#626200",
+                    "secondary-fixed-dim": "#cdcd00",
+                    "on-surface-variant": "#5d403b",
+                    "inverse-surface": "#333027",
+                    "surface-container-low": "#f9f3e4",
+                    "on-secondary-fixed": "#1d1d00",
+                    "on-tertiary-fixed-variant": "#2c4f27",
+                    "secondary-fixed": "#eaea00",
+                    "on-primary-fixed": "#410001",
+                    "primary-fixed-dim": "#ffb4a9",
+                    "tertiary-fixed": "#c4eeb8",
+                    "on-primary-fixed-variant": "#930004",
+                    "tertiary-fixed-dim": "#a9d19e",
+                    "primary": "#b40006",
+                    "inverse-on-surface": "#f6f0e1",
+                    "on-primary": "#ffffff",
+                    "on-background": "#1d1c13",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#494900",
+                    "error": "#ba1a1a",
+                    "surface-variant": "#e8e2d3",
+                    "secondary-container": "#e7e700",
+                    "on-primary-container": "#fff3f1",
+                    "on-surface": "#1d1c13"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "margin-mobile": "20px",
+                    "gutter": "16px",
+                    "unit": "8px",
+                    "container-max-width": "1200px"
+            },
+            "fontFamily": {
+                    "body-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "display-lg-mobile": [
+                            "Be Vietnam Pro"
+                    ],
+                    "display-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "game-logic": [
+                            "JetBrains Mono"
+                    ],
+                    "body-sm": [
+                            "Be Vietnam Pro"
+                    ]
+            },
+            "fontSize": {
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "game-logic": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* Pattern Overlay to simulate textured parchment/leaf without loading external images */
+        .bg-vietnam-pattern {
+            background-color: #fff9ea;
+            background-image: radial-gradient(#e6bdb7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Tactical button press effect */
+        .btn-tactile {
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .btn-tactile:active {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0 0 rgba(0,0,0,0) !important;
+        }
+        
+        /* Nonogram Grid Lines */
+        .nono-cell {
+            position: relative;
+        }
+        /* Every 5th line is thicker */
+        .nono-cell:nth-child(5n):not(:last-child) {
+            border-right: 2px solid #916f6a;
+        }
+        .nono-row:nth-child(5n) .nono-cell {
+            border-bottom: 2px solid #916f6a;
+        }
+    </style>
+</head>
+<body class="bg-vietnam-pattern text-on-surface font-body-lg min-h-screen pt-16 pb-24 overflow-x-hidden">
+<!-- TopAppBar (From JSON) -->
+<header class="bg-surface border-b-2 border-outline-variant shadow-sm fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16">
+<button class="material-symbols-outlined text-primary hover:bg-primary-container/10 transition-colors p-2 rounded-full">menu</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-widest text-center flex-1">TRÒ CHƠI DÂN GIAN</h1>
+<button class="material-symbols-outlined text-primary hover:bg-primary-container/10 transition-colors p-2 rounded-full">account_circle</button>
+</header>
+<!-- Main Game Canvas -->
+<main class="w-full max-w-container-max-width mx-auto px-unit flex flex-col items-center mt-6">
+<!-- Status Bar -->
+<div class="w-full max-w-md flex justify-between items-center bg-surface-container-high rounded-xl p-3 shadow-sm border border-outline-variant mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline" style="font-variation-settings: 'FILL' 1;">landscape</span>
+<span class="text-headline-md font-headline-md text-on-surface text-lg">Màn 08 - Nón Lá</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-game-logic text-game-logic">3</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-game-logic text-game-logic">05:20</span>
+</div>
+</div>
+</div>
+<!-- Nonogram Board Area -->
+<div class="bg-surface p-2 sm:p-4 rounded-xl shadow-lg border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Decorative corner accent -->
+<div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary-container rounded-tl-xl m-1 opacity-50"></div>
+<div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary-container rounded-br-xl m-1 opacity-50"></div>
+<div class="flex">
+<!-- Top-Left Empty Space -->
+<div class="w-16 sm:w-20 bg-surface"></div>
+<!-- Column Clues (Top) -->
+<div class="flex bg-surface-container-low border-b-2 border-outline border-l-2">
+<!-- 10 Columns -->
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span class="text-xs">1</span><span>2</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span class="text-xs">2</span><span>3</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span>5</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span>7</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span>9</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span>7</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span>5</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span class="text-xs">2</span><span>3</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r border-outline-variant font-game-logic text-game-logic text-on-surface leading-tight nono-cell"><span class="text-xs">1</span><span>2</span></div>
+<div class="w-7 sm:w-8 h-20 flex flex-col justify-end items-center pb-1 border-r-2 border-outline font-game-logic text-game-logic text-on-surface leading-tight"><span>1</span></div>
+</div>
+</div>
+<div class="flex border-b-2 border-outline">
+<!-- Row Clues (Left) -->
+<div class="flex flex-col bg-surface-container-low border-r-2 border-outline border-l-2">
+<!-- 10 Rows -->
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span>1</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span>3</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span>5</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span>7</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row border-b-2 border-outline"><span>9</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span class="text-xs">2</span><span>2</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span class="text-xs">3</span><span>3</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span class="text-xs">1</span><span class="text-xs">1</span><span>1</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 border-b border-outline-variant font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span class="text-xs">2</span><span>2</span></div>
+<div class="w-16 sm:w-20 h-7 sm:h-8 flex justify-end items-center pr-2 font-game-logic text-game-logic text-on-surface gap-1 nono-row"><span>1</span></div>
+</div>
+<!-- 10x10 Grid -->
+<div class="grid grid-cols-10 border-r-2 border-outline bg-outline-variant gap-[1px]">
+<!-- Row 1 -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell flex items-center justify-center"><span class="material-symbols-outlined text-outline text-lg">close</span></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell flex items-center justify-center"><span class="material-symbols-outlined text-outline text-lg">close</span></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<!-- Row 2 -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell flex items-center justify-center"><span class="material-symbols-outlined text-outline text-lg">close</span></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<!-- Row 3 -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell flex items-center justify-center"><span class="material-symbols-outlined text-outline text-lg">close</span></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<!-- Row 4 -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<!-- Row 5 (Bottom Border thick from CSS) -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-primary-container shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell flex items-center justify-center"><span class="material-symbols-outlined text-outline text-lg">close</span></div>
+<!-- Rows 6-10 (Simplified empty for visual demo, but structure is intact) -->
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+<div class="w-7 sm:w-8 h-7 sm:h-8 bg-surface nono-cell"></div>
+</div>
+</div>
+</div>
+<!-- Action Controls -->
+<div class="w-full max-w-md mt-8 flex flex-col gap-4">
+<!-- Primary Tools Toggle -->
+<div class="flex justify-center gap-4">
+<!-- Điền Ô (Fill) - Active State -->
+<button class="btn-tactile flex-1 bg-primary-container text-on-primary-container font-headline-md text-headline-md-mobile sm:text-headline-md py-3 px-4 rounded-xl shadow-[0_4px_0_0_theme('colors.on-error-container')] flex flex-col items-center justify-center border-2 border-transparent">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">edit_square</span>
+<span class="text-body-sm font-body-sm tracking-wide">Điền Ô</span>
+</button>
+<!-- Đánh Dấu X (Mark X) -->
+<button class="btn-tactile flex-1 bg-surface-container-highest text-on-surface-variant font-headline-md text-headline-md-mobile sm:text-headline-md py-3 px-4 rounded-xl shadow-[0_4px_0_0_theme('colors.outline')] border-2 border-outline-variant flex flex-col items-center justify-center hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined mb-1 text-outline">close</span>
+<span class="text-body-sm font-body-sm tracking-wide">Đánh Dấu X</span>
+</button>
+<!-- Gợi Ý (Hint) -->
+<button class="btn-tactile w-20 bg-secondary-container text-on-secondary-container py-3 px-2 rounded-xl shadow-[0_4px_0_0_theme('colors.secondary')] border-2 border-transparent flex flex-col items-center justify-center hover:brightness-95 transition-all">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<span class="text-body-sm font-body-sm font-bold">Gợi Ý</span>
+</button>
+</div>
+<!-- Secondary Actions -->
+<div class="flex justify-between items-center bg-surface border-2 border-outline-variant rounded-xl p-2 shadow-sm">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors px-4 py-2 rounded-lg hover:bg-surface-container-highest">
+<span class="material-symbols-outlined">undo</span>
+<span class="font-body-lg text-body-lg font-bold">Hoàn Tác</span>
+</button>
+<div class="w-px h-6 bg-outline-variant"></div>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors px-4 py-2 rounded-lg hover:bg-surface-container-highest">
+<span class="material-symbols-outlined">refresh</span>
+<span class="font-body-lg text-body-lg font-bold">Chơi Lại</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (From JSON) -->
+<nav class="bg-surface-container shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] shadow-lg fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile pb-2 pt-1 md:hidden rounded-t-xl border-t-0">
+<!-- Trang Chủ -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="text-body-sm font-body-sm">Trang Chủ</span>
+</button>
+<!-- Thử Thách (ACTIVE) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 hover:text-primary transition-transform duration-200 active:scale-90 shadow-sm border border-secondary/20">
+<span class="material-symbols-outlined mb-1 text-primary" style="font-variation-settings: 'FILL' 1;">extension</span>
+<span class="text-body-sm font-body-sm font-bold text-primary">Thử Thách</span>
+</button>
+<!-- Xếp Hạng -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="text-body-sm font-body-sm">Xếp Hạng</span>
+</button>
+<!-- Cài Đặt -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="text-body-sm font-body-sm">Cài Đặt</span>
+</button>
+</nav>
+</body></html>

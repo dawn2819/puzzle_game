@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cài Đặt &amp; Bảng Điểm</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#012202",
+                        "on-primary-fixed-variant": "#930004",
+                        "on-primary": "#ffffff",
+                        "background": "#fff9ea",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#ffb4a9",
+                        "on-tertiary-container": "#e1ffd5",
+                        "tertiary": "#3e6137",
+                        "on-primary-fixed": "#410001",
+                        "inverse-surface": "#333027",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f9f3e4",
+                        "inverse-on-surface": "#f6f0e1",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e8e2d3",
+                        "on-surface-variant": "#5d403b",
+                        "surface-dim": "#dfdacb",
+                        "surface-variant": "#e8e2d3",
+                        "surface-container": "#f3edde",
+                        "outline-variant": "#e6bdb7",
+                        "surface-tint": "#bf080b",
+                        "primary-fixed": "#ffdad5",
+                        "tertiary-fixed-dim": "#a9d19e",
+                        "secondary-fixed-dim": "#cdcd00",
+                        "tertiary-fixed": "#c4eeb8",
+                        "secondary-container": "#e7e700",
+                        "on-surface": "#1d1c13",
+                        "secondary-fixed": "#eaea00",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#fff3f1",
+                        "surface-bright": "#fff9ea",
+                        "surface-container-high": "#eee8d9",
+                        "on-secondary-fixed": "#1d1d00",
+                        "primary-fixed-dim": "#ffb4a9",
+                        "surface": "#fff9ea",
+                        "on-background": "#1d1c13",
+                        "primary": "#b40006",
+                        "on-tertiary-fixed-variant": "#2c4f27",
+                        "on-secondary-container": "#666600",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#494900",
+                        "secondary": "#626200",
+                        "outline": "#916f6a",
+                        "primary-container": "#da251d",
+                        "tertiary-container": "#557a4e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "unit": "8px",
+                        "margin-desktop": "40px",
+                        "container-max-width": "1200px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "game-logic": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "game-logic": ["16px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .banana-leaf-pattern {
+            background-image: radial-gradient(circle at center, rgba(169, 209, 158, 0.1) 10%, transparent 10%),
+                              radial-gradient(circle at center, rgba(169, 209, 158, 0.1) 10%, transparent 10%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        .non-la-gradient {
+            background: conic-gradient(from 180deg at 50% 50%, rgba(255,218,213,0.8) 0deg, rgba(230,189,183,0.5) 180deg, rgba(255,218,213,0.8) 360deg);
+        }
+    </style>
+</head>
+<body class="bg-background banana-leaf-pattern min-h-screen text-on-background font-body-lg overflow-x-hidden pt-20 pb-24 relative">
+<!-- TopAppBar Component -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b-2 border-outline-variant shadow-sm transition-colors duration-200">
+<button class="text-on-surface-variant hover:bg-primary-container/10 p-2 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-widest text-center">TRÒ CHƠI DÂN GIAN</h1>
+<button class="text-on-surface-variant hover:bg-primary-container/10 p-2 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</header>
+<main class="container mx-auto px-margin-mobile max-w-container-max-width">
+<!-- Header area for the current screen context -->
+<div class="mb-8 text-center mt-6">
+<h2 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-primary mb-2">Tùy Chọn &amp; Điểm Số</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Quản lý cài đặt cá nhân và xem lại thành tích của bạn trong các trò chơi dân gian.</p>
+</div>
+<!-- Tab Navigation -->
+<div class="flex justify-center mb-8 border-b-2 border-surface-variant max-w-md mx-auto">
+<button class="px-6 py-3 text-body-lg font-body-lg font-bold text-primary border-b-4 border-primary transition-all flex-1 text-center" id="tab-settings" onclick="switchTab('settings')">
+                Cài Đặt
+            </button>
+<button class="px-6 py-3 text-body-lg font-body-lg text-on-surface-variant hover:text-primary transition-all flex-1 text-center" id="tab-scores" onclick="switchTab('scores')">
+                Bảng Điểm
+            </button>
+</div>
+<!-- Settings Content -->
+<section class="max-w-xl mx-auto space-y-6 block" id="content-settings">
+<!-- Glassmorphism Card for Settings -->
+<div class="bg-surface-container/80 backdrop-blur-md rounded-xl p-6 shadow-lg border border-surface-variant">
+<!-- Volume Slider -->
+<div class="mb-8">
+<label class="flex justify-between items-center mb-2 text-headline-md font-headline-md text-on-surface" for="volume">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">volume_up</span>
+                            Âm lượng
+                        </span>
+<span class="text-primary font-bold" id="volume-value">75%</span>
+</label>
+<input class="w-full h-3 bg-surface-variant rounded-full appearance-none cursor-pointer accent-primary border-2 border-outline/20 shadow-inner" id="volume" max="100" min="0" name="volume" type="range" value="75"/>
+</div>
+<!-- Dark Mode Toggle -->
+<div class="mb-8 flex justify-between items-center">
+<span class="flex items-center gap-2 text-headline-md font-headline-md text-on-surface">
+<span class="material-symbols-outlined text-primary">dark_mode</span>
+                         Giao diện Tối
+                    </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-7 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary shadow-inner border border-outline/30"></div>
+</label>
+</div>
+<!-- Exit Button -->
+<div class="mt-10 flex justify-center">
+<button class="bg-error text-on-error px-8 py-3 rounded-lg text-headline-md font-headline-md font-bold shadow-md hover:bg-on-error-container hover:shadow-lg transition-all border-b-[3px] border-on-error-container flex items-center gap-2 active:translate-y-1 active:border-b-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">logout</span>
+                        Thoát Trò Chơi
+                    </button>
+</div>
+</div>
+</section>
+<!-- Scoreboard Content -->
+<section class="max-w-3xl mx-auto hidden" id="content-scores">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Game Score Card 1 -->
+<div class="bg-surface-container rounded-xl p-6 shadow-md border-l-4 border-primary relative overflow-hidden group hover:shadow-lg transition-shadow">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-display-lg" style="font-size: 64px;">extension</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">1</span>
+                        Ô Ăn Quan
+                    </h3>
+<div class="space-y-3 font-game-logic text-game-logic">
+<div class="flex justify-between bg-surface-container-high p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm cao nhất</span>
+<span class="text-primary font-bold text-lg">15,420</span>
+</div>
+<div class="flex justify-between bg-surface p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm gần nhất</span>
+<span class="text-on-surface font-semibold text-lg">12,100</span>
+</div>
+</div>
+</div>
+<!-- Game Score Card 2 -->
+<div class="bg-surface-container rounded-xl p-6 shadow-md border-l-4 border-tertiary relative overflow-hidden group hover:shadow-lg transition-shadow">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-display-lg" style="font-size: 64px;">sports_kabaddi</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold">2</span>
+                        Kéo Co
+                    </h3>
+<div class="space-y-3 font-game-logic text-game-logic">
+<div class="flex justify-between bg-surface-container-high p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm cao nhất</span>
+<span class="text-tertiary font-bold text-lg">8,950</span>
+</div>
+<div class="flex justify-between bg-surface p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm gần nhất</span>
+<span class="text-on-surface font-semibold text-lg">8,950</span>
+</div>
+</div>
+</div>
+<!-- Game Score Card 3 -->
+<div class="bg-surface-container rounded-xl p-6 shadow-md border-l-4 border-secondary relative overflow-hidden group hover:shadow-lg transition-shadow">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-display-lg" style="font-size: 64px;">flight</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold">3</span>
+                        Thả Diều
+                    </h3>
+<div class="space-y-3 font-game-logic text-game-logic">
+<div class="flex justify-between bg-surface-container-high p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm cao nhất</span>
+<span class="text-secondary font-bold text-lg">22,300</span>
+</div>
+<div class="flex justify-between bg-surface p-3 rounded-lg border border-surface-variant">
+<span class="text-on-surface-variant">Điểm gần nhất</span>
+<span class="text-on-surface font-semibold text-lg">19,500</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile pb-2 pt-1 bg-surface-container shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="text-body-sm font-body-sm mt-1">Trang Chủ</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">extension</span>
+<span class="text-body-sm font-body-sm mt-1">Thử Thách</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">leaderboard</span>
+<span class="text-body-sm font-body-sm mt-1">Xếp Hạng</span>
+</a>
+<!-- Active Nav Item -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-body-sm font-body-sm mt-1 font-bold">Cài Đặt</span>
+</a>
+</nav>
+<script>
+        // Tab switching logic
+        function switchTab(tabId) {
+            const settingsTab = document.getElementById('tab-settings');
+            const scoresTab = document.getElementById('tab-scores');
+            const settingsContent = document.getElementById('content-settings');
+            const scoresContent = document.getElementById('content-scores');
+
+            if (tabId === 'settings') {
+                settingsTab.classList.add('text-primary', 'border-b-4', 'border-primary', 'font-bold');
+                settingsTab.classList.remove('text-on-surface-variant');
+                scoresTab.classList.remove('text-primary', 'border-b-4', 'border-primary', 'font-bold');
+                scoresTab.classList.add('text-on-surface-variant');
+                
+                settingsContent.classList.remove('hidden');
+                settingsContent.classList.add('block');
+                scoresContent.classList.remove('block');
+                scoresContent.classList.add('hidden');
+            } else {
+                scoresTab.classList.add('text-primary', 'border-b-4', 'border-primary', 'font-bold');
+                scoresTab.classList.remove('text-on-surface-variant');
+                settingsTab.classList.remove('text-primary', 'border-b-4', 'border-primary', 'font-bold');
+                settingsTab.classList.add('text-on-surface-variant');
+                
+                scoresContent.classList.remove('hidden');
+                scoresContent.classList.add('block');
+                settingsContent.classList.remove('block');
+                settingsContent.classList.add('hidden');
+            }
+        }
+
+        // Volume slider logic
+        const volumeSlider = document.getElementById('volume');
+        const volumeValueDisplay = document.getElementById('volume-value');
+
+        volumeSlider.addEventListener('input', function() {
+            volumeValueDisplay.textContent = this.value + '%';
+        });
+    </script>
+</body></html>

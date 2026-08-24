@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trò Chơi Dân Gian - Thử Thách Sokoban</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f9f3e4",
+                        "secondary-fixed": "#eaea00",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#5d403b",
+                        "on-tertiary-fixed": "#012202",
+                        "on-tertiary-container": "#e1ffd5",
+                        "surface-container-high": "#eee8d9",
+                        "inverse-primary": "#ffb4a9",
+                        "primary-fixed-dim": "#ffb4a9",
+                        "on-primary-fixed-variant": "#930004",
+                        "surface-container": "#f3edde",
+                        "surface-bright": "#fff9ea",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#494900",
+                        "tertiary": "#3e6137",
+                        "primary-fixed": "#ffdad5",
+                        "secondary": "#626200",
+                        "on-primary-container": "#fff3f1",
+                        "outline": "#916f6a",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#da251d",
+                        "on-secondary-fixed": "#1d1d00",
+                        "surface": "#fff9ea",
+                        "on-primary-fixed": "#410001",
+                        "inverse-on-surface": "#f6f0e1",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e8e2d3",
+                        "tertiary-container": "#557a4e",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#c4eeb8",
+                        "surface-tint": "#bf080b",
+                        "tertiary-fixed-dim": "#a9d19e",
+                        "secondary-fixed-dim": "#cdcd00",
+                        "surface-variant": "#e8e2d3",
+                        "on-secondary-container": "#666600",
+                        "background": "#fff9ea",
+                        "on-tertiary-fixed-variant": "#2c4f27",
+                        "inverse-surface": "#333027",
+                        "primary": "#b40006",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1d1c13",
+                        "surface-dim": "#dfdacb",
+                        "outline-variant": "#e6bdb7",
+                        "on-background": "#1d1c13",
+                        "secondary-container": "#e7e700",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "container-max-width": "1200px",
+                        "gutter": "16px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "game-logic": ["JetBrains Mono"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "display-lg-mobile": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "game-logic": ["16px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom styles for tactile feel and grid */
+        .tactile-btn {
+            box-shadow: 0 6px 0 0 var(--tw-shadow-color);
+            transition: all 0.1s ease-in-out;
+        }
+        .tactile-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 0 var(--tw-shadow-color);
+        }
+        .wood-crate {
+            background-color: #d2b48c; /* Fallback */
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(0,0,0,0.05) 0px,
+                rgba(0,0,0,0.05) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+        }
+        .bamboo-wall {
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.1) 50%, transparent 50%);
+            background-size: 8px 100%;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<!-- Subtle Background Texture -->
+<div class="fixed inset-0 opacity-20 pointer-events-none z-0" data-alt="A subtle, highly detailed vector illustration pattern of banana leaves and lotus flowers rendered in a minimalist, modern light-mode style. The pattern features soft cream and faint pale green tones, creating an elegant, cultural backdrop for a Vietnamese heritage puzzle game without distracting from the foreground UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzVIGUX9H5CGtGPFaCxrRFL9KNdd6pwNB2DGqC5qPZylxtP-T9wlRhUJwQsZQHmjirDGoGwItK3XPhg2uXaIsg94-dMVjOWxu_91wzrSsbUoifceWLEAmx9-oV5KYOnV-VHBU1gcGj3bOFv9Ey3CSPA_fGWo938caR5hOFZF0ILcGtsEP4N8eNSsRaix_q_iSFpqV8ea-L0qGipYrXczzKsIO_UkAqM3MdsPaJt1ghQyrAcZCTkkdT3g')"></div>
+<!-- Main Game Container -->
+<main class="relative z-10 flex-grow flex flex-col items-center w-full max-w-container-max-width mx-auto px-margin-mobile pt-8 pb-32">
+<!-- Game Info Header (Top Area) -->
+<header class="w-full max-w-md bg-surface-container-high rounded-xl p-4 shadow-sm border border-outline-variant flex justify-between items-center mb-6">
+<div class="flex items-center gap-3">
+<div class="bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-lg font-headline-md text-headline-md shadow-inner flex items-center gap-2">
+<span class="material-symbols-outlined">flag</span>
+                    Level 12
+                </div>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-xl">swap_horiz</span>
+<span class="font-game-logic text-game-logic">Moves: 45</span>
+</div>
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined text-xl">timer</span>
+<span class="font-game-logic text-game-logic">02:30</span>
+</div>
+</div>
+</header>
+<!-- Central Area: Puzzle Grid -->
+<section class="w-full max-w-md aspect-square bg-surface-container shadow-xl rounded-xl p-3 border-4 border-outline mb-8 relative">
+<!-- Grid Layout (8x8 example) -->
+<div class="w-full h-full grid grid-cols-8 grid-rows-8 gap-1 bg-surface-variant p-1 rounded-lg">
+<!-- Row 1 -->
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<!-- Row 2 -->
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm flex items-center justify-center relative">
+<span class="material-symbols-outlined text-secondary text-2xl absolute opacity-50">star</span>
+</div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<!-- Row 3 -->
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-outline rounded-sm border-2 border-on-surface-variant wood-crate shadow-sm flex items-center justify-center">
+<div class="w-1/2 h-1/2 border border-on-surface-variant/50 rounded-sm"></div>
+</div>
+<div class="bg-surface-bright rounded-sm flex items-center justify-center relative">
+<span class="material-symbols-outlined text-secondary text-2xl absolute opacity-50">star</span>
+<!-- Box currently on target -->
+<div class="w-full h-full bg-outline rounded-sm border-2 border-secondary wood-crate shadow-sm flex items-center justify-center z-10">
+<div class="w-1/2 h-1/2 border border-secondary/50 rounded-sm"></div>
+</div>
+</div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<!-- Row 4 -->
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm flex items-center justify-center">
+<!-- Player Character (Sỹ Phu) -->
+<div class="bg-primary text-on-primary w-3/4 h-3/4 rounded-full flex items-center justify-center shadow-md relative group">
+<!-- Conical hat motif approximation via CSS -->
+<div class="absolute -top-1 w-full h-1/2 bg-primary-container rounded-t-full"></div>
+<span class="material-symbols-outlined text-xl relative z-10">person</span>
+</div>
+</div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<!-- Row 5 -->
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-tertiary rounded-sm bamboo-wall shadow-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div>
+<!-- Fill remainder to simulate board edge -->
+<div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div>
+<div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div><div class="bg-surface-bright rounded-sm"></div>
+</div>
+</section>
+<!-- Controls Area -->
+<section class="w-full max-w-md flex justify-between items-center px-4">
+<!-- Action Buttons (Left) -->
+<div class="flex flex-col gap-4">
+<button class="tactile-btn bg-surface-container-highest text-on-surface-variant font-headline-md text-headline-md rounded-xl w-16 h-16 flex flex-col items-center justify-center border-2 border-outline-variant" style="--tw-shadow-color: #dfdacb;">
+<span class="material-symbols-outlined text-2xl">undo</span>
+<span class="text-[10px] mt-1 font-bold">Hoàn Tác</span>
+</button>
+<button class="tactile-btn bg-error-container text-on-error-container font-headline-md text-headline-md rounded-xl w-16 h-16 flex flex-col items-center justify-center border-2 border-outline-variant" style="--tw-shadow-color: #ffb4a9;">
+<span class="material-symbols-outlined text-2xl">refresh</span>
+<span class="text-[10px] mt-1 font-bold">Chơi Lại</span>
+</button>
+</div>
+<!-- D-Pad (Right) -->
+<div class="grid grid-cols-3 grid-rows-3 gap-2">
+<div class="col-start-2">
+<button class="tactile-btn w-16 h-16 bg-primary text-on-primary rounded-xl flex items-center justify-center" style="--tw-shadow-color: #930004;">
+<span class="material-symbols-outlined text-3xl">keyboard_arrow_up</span>
+</button>
+</div>
+<div class="col-start-1 row-start-2">
+<button class="tactile-btn w-16 h-16 bg-primary text-on-primary rounded-xl flex items-center justify-center" style="--tw-shadow-color: #930004;">
+<span class="material-symbols-outlined text-3xl">keyboard_arrow_left</span>
+</button>
+</div>
+<div class="col-start-3 row-start-2">
+<button class="tactile-btn w-16 h-16 bg-primary text-on-primary rounded-xl flex items-center justify-center" style="--tw-shadow-color: #930004;">
+<span class="material-symbols-outlined text-3xl">keyboard_arrow_right</span>
+</button>
+</div>
+<div class="col-start-2 row-start-3">
+<button class="tactile-btn w-16 h-16 bg-primary text-on-primary rounded-xl flex items-center justify-center" style="--tw-shadow-color: #930004;">
+<span class="material-symbols-outlined text-3xl">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Shared Component implementation) -->
+<!-- Applying exact styles from JSON execution rules -->
+<nav class="docked full-width bottom-0 rounded-t-xl bg-surface-container shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] shadow-lg fixed left-0 w-full z-50 flex justify-around items-center px-margin-mobile pb-2 pt-1 md:hidden">
+<!-- Trang Chủ -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="text-body-sm font-body-sm">Trang Chủ</span>
+</a>
+<!-- Thử Thách (Active Tab) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">extension</span>
+<span class="text-body-sm font-body-sm font-bold">Thử Thách</span>
+</a>
+<!-- Xếp Hạng -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="text-body-sm font-body-sm">Xếp Hạng</span>
+</a>
+<!-- Cài Đặt -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="text-body-sm font-body-sm">Cài Đặt</span>
+</a>
+</nav>
+</body></html>

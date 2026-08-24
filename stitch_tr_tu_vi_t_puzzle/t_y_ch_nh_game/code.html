@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cài đặt Thử thách - Trò Chơi Dân Gian</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#012202",
+                      "on-primary-fixed-variant": "#930004",
+                      "on-primary": "#ffffff",
+                      "background": "#fff9ea",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#ffb4a9",
+                      "on-tertiary-container": "#e1ffd5",
+                      "tertiary": "#3e6137",
+                      "on-primary-fixed": "#410001",
+                      "inverse-surface": "#333027",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f9f3e4",
+                      "inverse-on-surface": "#f6f0e1",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e8e2d3",
+                      "on-surface-variant": "#5d403b",
+                      "surface-dim": "#dfdacb",
+                      "surface-variant": "#e8e2d3",
+                      "surface-container": "#f3edde",
+                      "outline-variant": "#e6bdb7",
+                      "surface-tint": "#bf080b",
+                      "primary-fixed": "#ffdad5",
+                      "tertiary-fixed-dim": "#a9d19e",
+                      "secondary-fixed-dim": "#cdcd00",
+                      "tertiary-fixed": "#c4eeb8",
+                      "secondary-container": "#e7e700",
+                      "on-surface": "#1d1c13",
+                      "secondary-fixed": "#eaea00",
+                      "on-error": "#ffffff",
+                      "on-primary-container": "#fff3f1",
+                      "surface-bright": "#fff9ea",
+                      "surface-container-high": "#eee8d9",
+                      "on-secondary-fixed": "#1d1d00",
+                      "primary-fixed-dim": "#ffb4a9",
+                      "surface": "#fff9ea",
+                      "on-background": "#1d1c13",
+                      "primary": "#b40006",
+                      "on-tertiary-fixed-variant": "#2c4f27",
+                      "on-secondary-container": "#666600",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#494900",
+                      "secondary": "#626200",
+                      "outline": "#916f6a",
+                      "primary-container": "#da251d",
+                      "tertiary-container": "#557a4e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "unit": "8px",
+                      "margin-desktop": "40px",
+                      "container-max-width": "1200px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "game-logic": [
+                              "JetBrains Mono"
+                      ],
+                      "display-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "display-lg": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "game-logic": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .bg-banana-leaf {
+            background-color: #fff9ea;
+            background-image: radial-gradient(#e8e2d3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .btn-press {
+            transition: all 0.1s ease-in-out;
+        }
+        .btn-press:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            border-bottom-width: 0px !important;
+            margin-top: 4px;
+        }
+
+        /* Hide scrollbar for clean horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-lg bg-banana-leaf min-h-screen flex flex-col relative pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b-2 border-outline-variant shadow-sm">
+<button aria-label="Menu" class="text-primary hover:bg-primary-container/10 transition-colors p-2 rounded-full active:scale-95 duration-100 ease-in-out flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-widest truncate">TRÒ CHƠI DÂN GIAN</h1>
+<button aria-label="Profile" class="text-primary hover:bg-primary-container/10 transition-colors p-2 rounded-full active:scale-95 duration-100 ease-in-out flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 px-margin-mobile md:px-margin-desktop w-full max-w-container-max-width mx-auto flex flex-col gap-6">
+<!-- Header Text -->
+<div class="text-center">
+<h2 class="text-display-lg-mobile font-display-lg-mobile text-on-surface mb-2">Tùy Chỉnh</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Chọn trò chơi và độ khó để bắt đầu</p>
+</div>
+<!-- Game Selector (Horizontal Scroll) -->
+<div class="flex overflow-x-auto no-scrollbar gap-3 pb-2 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
+<button class="game-tab active flex-shrink-0 px-6 py-3 rounded-full border-2 border-outline bg-primary text-on-primary font-headline-md text-headline-md transition-all shadow-sm" data-target="view-sudoku">
+                Sudoku
+            </button>
+<button class="game-tab flex-shrink-0 px-6 py-3 rounded-full border-2 border-outline bg-surface-container text-on-surface-variant font-headline-md text-headline-md hover:bg-surface-variant transition-all shadow-sm" data-target="view-2048">
+                2048
+            </button>
+<button class="game-tab flex-shrink-0 px-6 py-3 rounded-full border-2 border-outline bg-surface-container text-on-surface-variant font-headline-md text-headline-md hover:bg-surface-variant transition-all shadow-sm" data-target="view-nonogram">
+                Nonogram
+            </button>
+<button class="game-tab flex-shrink-0 px-6 py-3 rounded-full border-2 border-outline bg-surface-container text-on-surface-variant font-headline-md text-headline-md hover:bg-surface-variant transition-all shadow-sm" data-target="view-sokoban">
+                Sokoban
+            </button>
+</div>
+<!-- Dynamic Content Views -->
+<div class="flex-grow flex flex-col relative w-full mt-4">
+<!-- View: Sudoku & Sokoban (Shared Layout) -->
+<div class="game-view w-full animate-fade-in flex flex-col gap-6" id="view-sudoku">
+<h3 class="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-2">Độ Khó</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Easy Card -->
+<label class="cursor-pointer relative flex flex-col p-5 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-tertiary transition-colors shadow-sm group">
+<input checked="" class="peer sr-only" name="difficulty" type="radio" value="easy"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary peer-checked:bg-tertiary/5 transition-all pointer-events-none"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<span class="text-headline-md font-headline-md text-on-surface">Dễ</span>
+<span class="material-symbols-outlined text-tertiary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="mt-auto flex flex-col gap-1 relative z-10">
+<span class="text-body-sm font-body-sm text-tertiary bg-tertiary-fixed inline-block px-2 py-1 rounded w-fit">+1 Điểm Thưởng</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="timer">timer</span> Không giới hạn
+                            </span>
+</div>
+</label>
+<!-- Medium Card -->
+<label class="cursor-pointer relative flex flex-col p-5 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-secondary transition-colors shadow-sm group">
+<input class="peer sr-only" name="difficulty" type="radio" value="medium"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-secondary peer-checked:bg-secondary/5 transition-all pointer-events-none"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<span class="text-headline-md font-headline-md text-on-surface">Trung Bình</span>
+<div class="flex">
+<span class="material-symbols-outlined text-secondary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-secondary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-1 relative z-10">
+<span class="text-body-sm font-body-sm text-secondary bg-secondary-container inline-block px-2 py-1 rounded w-fit">+2 Điểm Thưởng</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="timer">timer</span> Giới hạn 5 phút
+                            </span>
+</div>
+</label>
+<!-- Hard Card -->
+<label class="cursor-pointer relative flex flex-col p-5 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-primary transition-colors shadow-sm group">
+<input class="peer sr-only" name="difficulty" type="radio" value="hard"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-primary peer-checked:bg-primary/5 transition-all pointer-events-none"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<span class="text-headline-md font-headline-md text-on-surface">Khó</span>
+<div class="flex">
+<span class="material-symbols-outlined text-primary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-1 relative z-10">
+<span class="text-body-sm font-body-sm text-on-primary bg-primary inline-block px-2 py-1 rounded w-fit">+5 Điểm Thưởng</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="timer">timer</span> Giới hạn 3 phút
+                            </span>
+</div>
+</label>
+</div>
+</div>
+<!-- View: 2048 -->
+<div class="game-view w-full hidden animate-fade-in flex flex-col gap-6" id="view-2048">
+<h3 class="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-2">Kích thước Ma trận</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Grid options -->
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-secondary transition-colors shadow-sm">
+<input checked="" class="peer sr-only" name="grid-size" type="radio" value="4x4"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-secondary peer-checked:bg-secondary-container transition-all pointer-events-none"></div>
+<span class="text-game-logic font-game-logic text-on-surface text-2xl relative z-10">4x4</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant relative z-10 mt-1">Cổ điển</span>
+</label>
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-secondary transition-colors shadow-sm">
+<input class="peer sr-only" name="grid-size" type="radio" value="5x5"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-secondary peer-checked:bg-secondary-container transition-all pointer-events-none"></div>
+<span class="text-game-logic font-game-logic text-on-surface text-2xl relative z-10">5x5</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant relative z-10 mt-1">Mở rộng</span>
+</label>
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-secondary transition-colors shadow-sm">
+<input class="peer sr-only" name="grid-size" type="radio" value="6x6"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-secondary peer-checked:bg-secondary-container transition-all pointer-events-none"></div>
+<span class="text-game-logic font-game-logic text-on-surface text-2xl relative z-10">6x6</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant relative z-10 mt-1">Khó nhằn</span>
+</label>
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-secondary transition-colors shadow-sm">
+<input class="peer sr-only" name="grid-size" type="radio" value="8x8"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-secondary peer-checked:bg-secondary-container transition-all pointer-events-none"></div>
+<span class="text-game-logic font-game-logic text-on-surface text-2xl relative z-10">8x8</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant relative z-10 mt-1">Thử thách lớn</span>
+</label>
+</div>
+</div>
+<!-- View: Nonogram -->
+<div class="game-view w-full hidden animate-fade-in flex flex-col gap-6" id="view-nonogram">
+<h3 class="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-2">Khổ Tranh (Pixel Art)</h3>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-tertiary transition-colors shadow-sm">
+<input checked="" class="peer sr-only" name="nono-size" type="radio" value="8x8"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary peer-checked:bg-tertiary/10 transition-all pointer-events-none"></div>
+<div class="w-12 h-12 bg-outline-variant mb-2 grid grid-cols-4 grid-rows-4 gap-0.5 p-0.5">
+<!-- Abstract tiny squares -->
+<div class="bg-tertiary col-span-2 row-span-2"></div>
+<div class="bg-surface"></div><div class="bg-tertiary"></div>
+<div class="bg-tertiary"></div><div class="bg-surface"></div>
+</div>
+<span class="text-game-logic font-game-logic text-on-surface text-xl relative z-10">8x8</span>
+</label>
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-tertiary transition-colors shadow-sm">
+<input class="peer sr-only" name="nono-size" type="radio" value="10x10"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary peer-checked:bg-tertiary/10 transition-all pointer-events-none"></div>
+<div class="w-12 h-12 bg-outline-variant mb-2 grid grid-cols-5 grid-rows-5 gap-0.5 p-0.5">
+<div class="bg-surface col-span-5 row-span-2"></div>
+<div class="bg-tertiary col-span-5 row-span-3"></div>
+</div>
+<span class="text-game-logic font-game-logic text-on-surface text-xl relative z-10">10x10</span>
+</label>
+<label class="cursor-pointer relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-tertiary transition-colors shadow-sm">
+<input class="peer sr-only" name="nono-size" type="radio" value="12x12"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary peer-checked:bg-tertiary/10 transition-all pointer-events-none"></div>
+<div class="w-12 h-12 bg-outline-variant mb-2 grid grid-cols-6 grid-rows-6 gap-0.5 p-0.5">
+<div class="bg-tertiary col-span-6 row-span-6 rounded-full"></div>
+</div>
+<span class="text-game-logic font-game-logic text-on-surface text-xl relative z-10">12x12</span>
+</label>
+</div>
+</div>
+<!-- View: Sokoban -->
+<div class="game-view w-full hidden animate-fade-in flex flex-col gap-6" id="view-sokoban">
+<h3 class="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-2">Bản đồ Sokoban</h3>
+<!-- Reusing Sudoku difficulty cards layout for simplicity as per prompt grouping -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Easy Card -->
+<label class="cursor-pointer relative flex flex-col p-5 bg-surface-container-lowest rounded-xl border-2 border-outline hover:border-tertiary transition-colors shadow-sm group">
+<input checked="" class="peer sr-only" name="soko-diff" type="radio" value="easy"/>
+<div class="absolute inset-0 rounded-xl border-2 border-transparent peer-checked:border-tertiary peer-checked:bg-tertiary/5 transition-all pointer-events-none"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<span class="text-headline-md font-headline-md text-on-surface">Kho nhỏ</span>
+<span class="material-symbols-outlined text-tertiary" data-icon="inventory_2">inventory_2</span>
+</div>
+<div class="mt-auto flex flex-col gap-1 relative z-10">
+<span class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">Ít chướng ngại vật</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</main>
+<!-- Fixed Action Button Area -->
+<div class="fixed bottom-16 left-0 w-full px-margin-mobile pb-6 pt-4 bg-gradient-to-t from-surface via-surface to-transparent z-40 flex justify-center">
+<button class="w-full max-w-md bg-primary text-on-primary font-headline-md text-headline-md py-4 rounded-xl border-b-4 border-on-primary-fixed-variant btn-press shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide">
+<span>BẮT ĐẦU</span>
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile pb-2 pt-1 bg-surface-container dark:bg-surface-container-low shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant py-1 hover:text-primary dark:hover:text-primary-fixed">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-body-sm font-body-sm">Trang Chủ</span>
+</button>
+<!-- Active Tab: Thử Thách -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-5 py-1 scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="extension" style="font-variation-settings: 'FILL' 1;">extension</span>
+<span class="text-body-sm font-body-sm font-bold">Thử Thách</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant py-1 hover:text-primary dark:hover:text-primary-fixed">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="text-body-sm font-body-sm">Xếp Hạng</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant py-1 hover:text-primary dark:hover:text-primary-fixed">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-body-sm font-body-sm">Cài Đặt</span>
+</button>
+</nav>
+<!-- Simple JS for Tab Switching -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.game-tab');
+            const views = document.querySelectorAll('.game-view');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Reset all tabs
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-primary', 'text-on-primary');
+                        t.classList.add('bg-surface-container', 'text-on-surface-variant');
+                    });
+                    
+                    // Activate clicked tab
+                    tab.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                    tab.classList.add('bg-primary', 'text-on-primary');
+
+                    // Hide all views
+                    views.forEach(v => v.classList.add('hidden'));
+
+                    // Show target view
+                    const targetId = tab.getAttribute('data-target');
+                    const targetView = document.getElementById(targetId);
+                    if (targetView) {
+                        targetView.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>
