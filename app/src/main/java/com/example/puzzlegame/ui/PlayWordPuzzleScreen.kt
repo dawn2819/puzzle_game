@@ -27,6 +27,18 @@ import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 
+data class WordLevel(
+    val target: String,
+    val letters: List<String>,
+    val hint: String
+)
+
+data class GridWordLevel(
+    val target: String,
+    val grid: List<List<String>>,
+    val hint: String
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayWordPuzzleScreen(
@@ -38,20 +50,132 @@ fun PlayWordPuzzleScreen(
     val audioManager = remember { AudioManager(context).apply { volume = prefs.volume } }
 
     var selectedTab by remember { mutableStateOf(0) } // 0: Nối chữ (Word Connect), 1: Sắp xếp (Anagram), 2: Tìm ô chữ (Word Search)
-    var isVictory by remember { mutableStateOf(false) }
+    
+    // Level indices for the three tabs (0-indexed, up to 4)
+    var connectLevelIdx by remember { mutableStateOf(0) }
+    var anagramLevelIdx by remember { mutableStateOf(0) }
+    var searchLevelIdx by remember { mutableStateOf(0) }
 
-    fun playWin() {
-        audioManager.playClick()
-        isVictory = true
+    var showLevelVictory by remember { mutableStateOf(false) }
+    var showGameCompletedByTab by remember { mutableStateOf<Int?>(null) } // Tab index which completed all levels
+
+    val connectLevels = remember {
+        listOf(
+            WordLevel("LÀNG", listOf("À", "L", "G", "N"), "Đơn vị hành chính cấp cơ sở ở nông thôn Việt Nam 🏡"),
+            WordLevel("CỐM", listOf("M", "C", "Ố", "N"), "Đặc sản lúa non bọc lá sen của làng Vòng, Hà Nội 🌾"),
+            WordLevel("CHÙA", listOf("Ù", "H", "A", "C", "I"), "Nơi thờ Phật trang nghiêm cổ kính ở làng quê Việt Nam ⛩️"),
+            WordLevel("ĐÌNH", listOf("Ì", "Đ", "H", "N", "T"), "Nơi hội họp và thờ thành hoàng bản thổ của làng xã Việt Nam 🏛️"),
+            WordLevel("TRÚC", listOf("Ú", "T", "C", "R", "U"), "Loại cây thân tre thanh mảnh biểu tượng cho khí chất quân tử 🎋")
+        )
     }
 
-    // Thưởng XP/Coins khi thắng ở mỗi chế độ
-    LaunchedEffect(isVictory, selectedTab) {
-        if (isVictory) {
-            val winKey = "wordpuzzle_win_credited_tab_$selectedTab"
-            if (prefs.getHighScore(winKey) == 0) {
-                prefs.addXpAndCoins(80, 15) // +80 XP, +15 Coins
-                prefs.saveScore(winKey, 1)
+    val anagramLevels = remember {
+        listOf(
+            WordLevel("NÓNLÁ", listOf("Á", "N", "L", "Ó", "N"), "Vật che nắng mưa hình chóp làm bằng lá cọ 👒"),
+            WordLevel("ÁODÀI", listOf("Ì", "Á", "O", "D", "À"), "Trang phục truyền thống tôn vinh nét đẹp phụ nữ Việt 👗"),
+            WordLevel("BÁNHCHƯNG", listOf("B", "Á", "N", "H", "C", "H", "Ư", "N", "G").shuffled(), "Món bánh Tết truyền thống bọc lá dong chứa nhân đậu xanh thịt mỡ 🟩"),
+            WordLevel("CỒNGCHIÊNG", listOf("C", "Ồ", "N", "G", "C", "H", "I", "Ê", "N", "G").shuffled(), "Không gian di sản âm nhạc phi vật thể Tây Nguyên 🥁"),
+            WordLevel("BẢOTÀNG", listOf("B", "Ả", "O", "T", "À", "N", "G").shuffled(), "Nơi lưu giữ tài liệu lịch sử, hiện vật di sản văn hóa tổ tiên 🏛️")
+        )
+    }
+
+    val searchLevels = remember {
+        listOf(
+            GridWordLevel(
+                target = "PHỞ",
+                grid = listOf(
+                    listOf("H", "X", "P", "T", "L", "M"),
+                    listOf("G", "A", "H", "O", "B", "R"),
+                    listOf("N", "N", "Ở", "M", "A", "P"),
+                    listOf("D", "U", "N", "A", "N", "O"),
+                    listOf("A", "I", "C", "H", "U", "A"),
+                    listOf("T", "B", "N", "O", "N", "L")
+                ),
+                hint = "Món nước truyền thống bò/gà nổi tiếng thế giới 🍜"
+            ),
+            GridWordLevel(
+                target = "SEN",
+                grid = listOf(
+                    listOf("S", "E", "N", "T", "L", "M"),
+                    listOf("X", "A", "B", "O", "G", "R"),
+                    listOf("M", "N", "G", "M", "A", "P"),
+                    listOf("D", "U", "N", "A", "N", "O"),
+                    listOf("A", "I", "C", "H", "U", "A"),
+                    listOf("T", "B", "N", "O", "N", "L")
+                ),
+                hint = "Loài hoa thanh cao, quốc hoa biểu trưng cho nhà Phật 🌸"
+            ),
+            GridWordLevel(
+                target = "BÁNHMÌ",
+                grid = listOf(
+                    listOf("B", "Á", "N", "H", "M", "Ì"),
+                    listOf("X", "A", "B", "O", "G", "R"),
+                    listOf("M", "N", "G", "M", "A", "P"),
+                    listOf("D", "U", "N", "A", "N", "O"),
+                    listOf("A", "I", "C", "H", "U", "A"),
+                    listOf("T", "B", "N", "O", "N", "L")
+                ),
+                hint = "Món ăn đường phố Việt Nam lọt top ngon nhất thế giới 🥖"
+            ),
+            GridWordLevel(
+                target = "ÁODÀI",
+                grid = listOf(
+                    listOf("Á", "X", "Y", "Z", "W", "K"),
+                    listOf("O", "D", "G", "O", "B", "R"),
+                    listOf("D", "N", "À", "M", "A", "P"),
+                    listOf("À", "U", "N", "I", "N", "O"),
+                    listOf("I", "I", "C", "H", "U", "A"),
+                    listOf("T", "B", "N", "O", "N", "L")
+                ),
+                hint = "Trang phục cổ truyền thướt tha hai tà áo lụa Việt Nam 👗"
+            ),
+            GridWordLevel(
+                target = "CỒNG",
+                grid = listOf(
+                    listOf("C", "Ồ", "N", "G", "L", "M"),
+                    listOf("X", "A", "B", "O", "G", "R"),
+                    listOf("M", "N", "G", "M", "A", "P"),
+                    listOf("D", "U", "N", "A", "N", "O"),
+                    listOf("A", "I", "C", "H", "U", "A"),
+                    listOf("T", "B", "N", "O", "N", "L")
+                ),
+                hint = "Nhạc cụ đúc bằng đồng tiêu biểu của Tây Nguyên 🔔"
+            )
+        )
+    }
+
+    fun onLevelSolved() {
+        audioManager.playClick()
+        
+        // Thưởng điểm XP/Coins sau mỗi level
+        prefs.addXpAndCoins(50, 10)
+        
+        showLevelVictory = true
+    }
+
+    fun handleNextLevel() {
+        showLevelVictory = false
+        when (selectedTab) {
+            0 -> {
+                if (connectLevelIdx < connectLevels.size - 1) {
+                    connectLevelIdx++
+                } else {
+                    showGameCompletedByTab = 0
+                }
+            }
+            1 -> {
+                if (anagramLevelIdx < anagramLevels.size - 1) {
+                    anagramLevelIdx++
+                } else {
+                    showGameCompletedByTab = 1
+                }
+            }
+            2 -> {
+                if (searchLevelIdx < searchLevels.size - 1) {
+                    searchLevelIdx++
+                } else {
+                    showGameCompletedByTab = 2
+                }
             }
         }
     }
@@ -99,7 +223,7 @@ fun PlayWordPuzzleScreen(
                         onClick = {
                             audioManager.playClick()
                             selectedTab = 0
-                            isVictory = false
+                            showLevelVictory = false
                         },
                         text = { Text("Nối Chữ", fontWeight = FontWeight.Bold) }
                     )
@@ -108,7 +232,7 @@ fun PlayWordPuzzleScreen(
                         onClick = {
                             audioManager.playClick()
                             selectedTab = 1
-                            isVictory = false
+                            showLevelVictory = false
                         },
                         text = { Text("Tráo Chữ", fontWeight = FontWeight.Bold) }
                     )
@@ -117,7 +241,7 @@ fun PlayWordPuzzleScreen(
                         onClick = {
                             audioManager.playClick()
                             selectedTab = 2
-                            isVictory = false
+                            showLevelVictory = false
                         },
                         text = { Text("Tìm Chữ", fontWeight = FontWeight.Bold) }
                     )
@@ -125,38 +249,65 @@ fun PlayWordPuzzleScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Hiển thị cấp độ hiện tại
+                val currentLevelText = when (selectedTab) {
+                    0 -> "Màn ${connectLevelIdx + 1}/${connectLevels.size}"
+                    1 -> "Màn ${anagramLevelIdx + 1}/${anagramLevels.size}"
+                    else -> "Màn ${searchLevelIdx + 1}/${searchLevels.size}"
+                }
+                Text(
+                    text = currentLevelText,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = FlagRed,
+                    modifier = Modifier.align(Alignment.End)
+                )
+
                 // Nội dung các Tab
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     when (selectedTab) {
-                        0 -> WordConnectGame(onWin = { playWin() }, audioManager = audioManager)
-                        1 -> AnagramGame(onWin = { playWin() }, audioManager = audioManager)
-                        2 -> WordSearchGame(onWin = { playWin() }, audioManager = audioManager)
+                        0 -> {
+                            key(connectLevelIdx) {
+                                WordConnectGame(
+                                    level = connectLevels[connectLevelIdx],
+                                    onWin = { onLevelSolved() },
+                                    audioManager = audioManager
+                                )
+                            }
+                        }
+                        1 -> {
+                            key(anagramLevelIdx) {
+                                AnagramGame(
+                                    level = anagramLevels[anagramLevelIdx],
+                                    onWin = { onLevelSolved() },
+                                    audioManager = audioManager
+                                )
+                            }
+                        }
+                        2 -> {
+                            key(searchLevelIdx) {
+                                WordSearchGame(
+                                    level = searchLevels[searchLevelIdx],
+                                    onWin = { onLevelSolved() },
+                                    audioManager = audioManager
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
 
-        // Hộp thoại chiến thắng chúc mừng
-        if (isVictory) {
+        // Hộp thoại thắng màn chơi đơn
+        if (showLevelVictory) {
             AlertDialog(
                 onDismissRequest = { },
                 confirmButton = {
                     Button(
-                        onClick = {
-                            audioManager.playClick()
-                            isVictory = false
-                        },
+                        onClick = { handleNextLevel() },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text("Tiếp Tục", fontWeight = FontWeight.Bold)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        audioManager.playClick()
-                        onBack()
-                    }) {
-                        Text("Thoát", fontWeight = FontWeight.Bold)
                     }
                 },
                 title = {
@@ -173,10 +324,69 @@ fun PlayWordPuzzleScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Bạn đã tìm đúng từ vựng tinh hoa văn hóa Việt Nam thành công!", fontSize = 14.sp, textAlign = TextAlign.Center)
+                        Text("Chúc mừng bạn đã giải câu đố chữ Việt thành công!", fontSize = 14.sp, textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "+80 XP và +15 Tiền vàng thưởng đã được thêm vào Bảo tàng Hồn Việt!",
+                            "+50 XP và +10 Tiền vàng thưởng đã được ghi nhận!",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            color = BambooGreen
+                        )
+                    }
+                },
+                containerColor = SurfaceNormal,
+                modifier = Modifier.shadow(16.dp, RoundedCornerShape(28.dp))
+            )
+        }
+
+        // Hộp thoại hoàn thành toàn bộ tất cả màn chơi
+        showGameCompletedByTab?.let { tabIdx ->
+            AlertDialog(
+                onDismissRequest = { },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            audioManager.playClick()
+                            showGameCompletedByTab = null
+                            when (tabIdx) {
+                                0 -> connectLevelIdx = 0
+                                1 -> anagramLevelIdx = 0
+                                2 -> searchLevelIdx = 0
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = BambooGreen)
+                    ) {
+                        Text("Chơi Lại Từ Đầu", fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        audioManager.playClick()
+                        showGameCompletedByTab = null
+                        onBack()
+                    }) {
+                        Text("Thoát", fontWeight = FontWeight.Bold)
+                    }
+                },
+                title = {
+                    Text(
+                        "🏆 ĐÃ PHÁ ĐẢO CHẾ ĐỘ!",
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = FlagRed
+                    )
+                },
+                text = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Tuyệt đỉnh trí tuệ! Bạn đã vượt qua tất cả 5 màn chơi khó nhằn của chế độ này!", fontSize = 14.sp, textAlign = TextAlign.Center)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "+200 XP và +40 Tiền vàng thưởng siêu cấp đã được ghi danh vào Bảo tàng Hồn Việt!",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -192,22 +402,24 @@ fun PlayWordPuzzleScreen(
 }
 
 // ----------------------------------------------------
-// 1. CHẾ ĐỘ NỐI CHỮ (WORD CONNECT) - Tìm từ "LÀNG"
+// 1. CHẾ ĐỘ NỐI CHỮ (WORD CONNECT)
 // ----------------------------------------------------
 @Composable
-fun WordConnectGame(onWin: () -> Unit, audioManager: AudioManager) {
-    val targetWord = "LÀNG"
+fun WordConnectGame(
+    level: WordLevel,
+    onWin: () -> Unit,
+    audioManager: AudioManager
+) {
     var selectedLetters by remember { mutableStateOf("") }
-    val lettersList = listOf("À", "L", "G", "N")
+    val lettersList = remember { level.letters }
 
     fun onLetterClick(letter: String) {
         audioManager.playClick()
-        if (selectedLetters.length < targetWord.length) {
+        if (selectedLetters.length < level.target.length) {
             selectedLetters += letter
-            if (selectedLetters == targetWord) {
+            if (selectedLetters == level.target) {
                 onWin()
-            } else if (selectedLetters.length == targetWord.length) {
-                // Nhập sai, tự động reset
+            } else if (selectedLetters.length == level.target.length) {
                 selectedLetters = ""
                 audioManager.playError()
             }
@@ -222,16 +434,18 @@ fun WordConnectGame(onWin: () -> Unit, audioManager: AudioManager) {
         Text("Ghép các chữ cái để tạo thành từ:", fontSize = 15.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Gợi ý: Đơn vị hành chính cấp cơ sở ở nông thôn Việt Nam 🏡",
+            text = "Gợi ý: ${level.hint}",
             fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(32.dp))
 
         // Hiển thị từ đang chọn
         Box(
             modifier = Modifier
-                .width(200.dp)
+                .width(220.dp)
                 .height(60.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(SurfaceNormal)
@@ -257,7 +471,7 @@ fun WordConnectGame(onWin: () -> Unit, audioManager: AudioManager) {
             lettersList.forEach { letter ->
                 Box(
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(56.dp)
                         .clip(CircleShape)
                         .background(Color.White)
                         .border(1.5.dp, OutlineBrown, CircleShape)
@@ -266,7 +480,7 @@ fun WordConnectGame(onWin: () -> Unit, audioManager: AudioManager) {
                 ) {
                     Text(
                         text = letter,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = EarthyBrown
                     )
@@ -285,12 +499,16 @@ fun WordConnectGame(onWin: () -> Unit, audioManager: AudioManager) {
 }
 
 // ----------------------------------------------------
-// 2. CHẾ ĐỘ TRÁO CHỮ (ANAGRAM) - Tìm từ "NÓNLÁ"
+// 2. CHẾ ĐỘ TRÁO CHỮ (ANAGRAM)
 // ----------------------------------------------------
 @Composable
-fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
-    val targetWord = "NÓNLÁ"
-    val shuffledList = remember { mutableStateListOf("Á", "N", "L", "Ó", "N") }
+fun AnagramGame(
+    level: WordLevel,
+    onWin: () -> Unit,
+    audioManager: AudioManager
+) {
+    val targetWord = level.target
+    val shuffledList = remember { mutableStateListOf<String>().apply { addAll(level.letters) } }
     val userOrder = remember { mutableStateListOf<String>() }
 
     fun addLetter(letter: String) {
@@ -301,9 +519,8 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
         if (userOrder.joinToString("") == targetWord) {
             onWin()
         } else if (shuffledList.isEmpty()) {
-            // Không khớp, tự động reset
             shuffledList.clear()
-            shuffledList.addAll(listOf("Á", "N", "L", "Ó", "N"))
+            shuffledList.addAll(level.letters)
             userOrder.clear()
             audioManager.playError()
         }
@@ -317,21 +534,23 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
         Text("Nhấp chọn chữ cái theo đúng thứ tự từ vựng:", fontSize = 15.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Gợi ý: Vật che nắng mưa hình chóp làm bằng lá cọ 👒",
+            text = "Gợi ý: ${level.hint}",
             fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(32.dp))
 
         // Kết quả lắp ghép của user
         Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.height(60.dp)
         ) {
             userOrder.forEach { letter ->
                 Box(
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(46.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color(0xFFE8F5E9))
                         .border(1.5.dp, BambooGreen, RoundedCornerShape(8.dp)),
@@ -339,7 +558,7 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
                 ) {
                     Text(
                         text = letter,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = BambooGreen
                     )
@@ -351,21 +570,21 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
 
         // Các chữ cái lộn xộn để chọn
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             shuffledList.forEach { letter ->
                 Box(
                     modifier = Modifier
-                        .size(54.dp)
+                        .size(48.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.White)
-                        .border(1.dp, OutlineBrown, RoundedCornerShape(8.dp))
+                        .border(1.5.dp, OutlineBrown, RoundedCornerShape(8.dp))
                         .clickable { addLetter(letter) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = letter,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = EarthyBrown
                     )
@@ -377,7 +596,7 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
         TextButton(onClick = {
             audioManager.playClick()
             shuffledList.clear()
-            shuffledList.addAll(listOf("Á", "N", "L", "Ó", "N"))
+            shuffledList.addAll(level.letters)
             userOrder.clear()
         }) {
             Text("Đặt lại", fontWeight = FontWeight.Bold, color = FlagRed)
@@ -386,19 +605,16 @@ fun AnagramGame(onWin: () -> Unit, audioManager: AudioManager) {
 }
 
 // ----------------------------------------------------
-// 3. CHẾ ĐỘ TÌM CHỮ (WORD SEARCH) - Tìm từ "PHỞ"
+// 3. CHẾ ĐỘ TÌM CHỮ (WORD SEARCH)
 // ----------------------------------------------------
 @Composable
-fun WordSearchGame(onWin: () -> Unit, audioManager: AudioManager) {
-    val wordToFind = "PHỞ"
-    val grid = listOf(
-        listOf("H", "X", "P", "T", "L", "M"),
-        listOf("G", "A", "H", "O", "B", "R"),
-        listOf("N", "N", "Ở", "M", "A", "P"),
-        listOf("D", "U", "N", "A", "N", "O5"),
-        listOf("A", "I", "C", "H", "U", "A"),
-        listOf("T", "B", "N", "O", "N", "L")
-    )
+fun WordSearchGame(
+    level: GridWordLevel,
+    onWin: () -> Unit,
+    audioManager: AudioManager
+) {
+    val wordToFind = level.target
+    val grid = remember { level.grid }
     val selectedCells = remember { mutableStateListOf<Pair<Int, Int>>() }
 
     fun onCellClick(r: Int, c: Int) {
@@ -408,12 +624,10 @@ fun WordSearchGame(onWin: () -> Unit, audioManager: AudioManager) {
             selectedCells.remove(pos)
         } else {
             selectedCells.add(pos)
-            // Lắp từ ghép từ các ô đã click theo đúng thứ tự chọn
             val word = selectedCells.map { grid[it.first][it.second] }.joinToString("")
             if (word == wordToFind) {
                 onWin()
             } else if (word.length >= wordToFind.length) {
-                // Nhập sai, reset
                 selectedCells.clear()
                 audioManager.playError()
             }
@@ -428,10 +642,12 @@ fun WordSearchGame(onWin: () -> Unit, audioManager: AudioManager) {
         Text("Tìm từ vựng ẩn giấu trên lưới chữ:", fontSize = 15.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Từ cần tìm: $wordToFind (Món nước truyền thống bò/gà) 🍜",
+            text = "Từ cần tìm: $wordToFind (${level.hint})",
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
-            color = FlagRed
+            color = FlagRed,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
 
