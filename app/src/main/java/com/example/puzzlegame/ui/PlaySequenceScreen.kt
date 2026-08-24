@@ -39,17 +39,17 @@ fun PlaySequenceScreen(
     val audioManager = remember { AudioManager(context).apply { volume = prefs.volume } }
 
     var selectedTab by remember { mutableStateOf(0) } // 0: Chơi chuyền, 1: Tập tầm vông
-    var isVictory by remember { mutableStateOf(false) }
+    var isVictory by remember { mutableStateOf(false) } // Sử dụng cho Tập Tầm Vông
 
     fun playWin() {
         audioManager.playClick()
         isVictory = true
     }
 
-    // Thưởng XP/Coins khi thắng
+    // Thưởng XP/Coins của Tập Tầm Vông khi thắng
     LaunchedEffect(isVictory, selectedTab) {
-        if (isVictory) {
-            val winKey = "sequence_win_credited_tab_$selectedTab"
+        if (isVictory && selectedTab == 1) {
+            val winKey = "sequence_win_credited_tab_1"
             if (prefs.getHighScore(winKey) == 0) {
                 prefs.addXpAndCoins(100, 20)
                 prefs.saveScore(winKey, 1)
@@ -125,7 +125,7 @@ fun PlaySequenceScreen(
 
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     if (selectedTab == 0) {
-                        ChoiChuyenGame(onWin = { playWin() }, audioManager = audioManager)
+                        ChoiChuyenGame(onBack = onBack, audioManager = audioManager)
                     } else {
                         TapTamVongGame(onWin = { playWin() }, audioManager = audioManager)
                     }
@@ -133,8 +133,8 @@ fun PlaySequenceScreen(
             }
         }
 
-        // Hộp thoại thắng (Victory)
-        if (isVictory) {
+        // Hộp thoại thắng (Chỉ dành cho Tập Tầm Vông)
+        if (isVictory && selectedTab == 1) {
             AlertDialog(
                 onDismissRequest = { },
                 confirmButton = {
@@ -158,7 +158,7 @@ fun PlaySequenceScreen(
                 },
                 title = {
                     Text(
-                        "🎉 CHIẾN THẮNG XUẤT SẮC!",
+                        "🎉 ĐÔI MẮT TINH TƯỜNG!",
                         fontWeight = FontWeight.ExtraBold,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
@@ -171,13 +171,13 @@ fun PlaySequenceScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = if (selectedTab == 0) "Bạn đã tái hiện chuẩn xác chuỗi chuyền hạt dừa!" else "Đôi mắt tinh tường! Bạn đoán đúng tay chứa sỏi vàng!",
+                            text = "Bạn đoán đúng chính xác tay chứa sỏi vàng!",
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "+100 XP và +20 Tiền vàng thưởng đã được ghi nhận vào hồ sơ di sản Hồn Việt!",
+                            "+100 XP và +20 Tiền vàng thưởng đã được ghi nhận vào hồ sơ Hồn Việt!",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -193,11 +193,14 @@ fun PlaySequenceScreen(
 }
 
 // ----------------------------------------------------
-// 1. GAME CHƠI CHUYỀN
+// 1. GAME CHƠI CHUYỀN (LOOP MODE UNTIL DEFEAT)
 // ----------------------------------------------------
 @Composable
-fun ChoiChuyenGame(onWin: () -> Unit, audioManager: AudioManager) {
+fun ChoiChuyenGame(onBack: () -> Unit, audioManager: AudioManager) {
+    val context = LocalContext.current
+    val prefs = remember { GamePreferences(context) }
     val coroutineScope = rememberCoroutineScope()
+    
     var sequenceLength by remember { mutableStateOf(3) }
     val fullSequence = remember { mutableStateListOf<Int>() }
     val userSequence = remember { mutableStateListOf<Int>() }
@@ -264,18 +267,13 @@ fun ChoiChuyenGame(onWin: () -> Unit, audioManager: AudioManager) {
             return
         }
 
-        // Kiểm tra hoàn thành chuỗi
+        // Kiểm tra hoàn thành chuỗi -> Tự động tăng độ dài không giới hạn (Loop Mode)
         if (userSequence.size == fullSequence.size) {
             coroutineScope.launch {
                 delay(300)
-                if (sequenceLength < 5) {
-                    // Lên cấp tiếp chuỗi dài hơn
-                    sequenceLength++
-                    generateSequence()
-                    playSequence()
-                } else {
-                    onWin()
-                }
+                sequenceLength++
+                generateSequence()
+                playSequence()
             }
         }
     }
@@ -296,7 +294,7 @@ fun ChoiChuyenGame(onWin: () -> Unit, audioManager: AudioManager) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Độ dài chuỗi: $sequenceLength Hạt 🪵",
+                text = "Độ dài hiện tại: $sequenceLength Hạt 🪵",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -359,16 +357,86 @@ fun ChoiChuyenGame(onWin: () -> Unit, audioManager: AudioManager) {
             }
         }
 
-        if (isGameOver) {
-            Button(
-                onClick = { initNewGame() },
-                colors = ButtonDefaults.buttonColors(containerColor = FlagRed)
-            ) {
-                Text("Chơi Lại", fontWeight = FontWeight.Bold)
-            }
-        } else {
-            Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(40.dp))
+    }
+
+    // Hộp thoại khi kết thúc game (Game Over) ở chế độ loop vô tận
+    if (isGameOver) {
+        val currentScore = sequenceLength - 1 // Đạt chuỗi thành công trước khi bị lỗi
+        val highScore = prefs.getHighScore("choichuyen_highscore")
+        val isNewRecord = currentScore > highScore
+
+        if (isNewRecord) {
+            prefs.saveScore("choichuyen_highscore", currentScore)
         }
+
+        // Tự động cộng thưởng XP & Coins
+        val xpGained = currentScore * 15
+        val coinsGained = currentScore * 3
+        LaunchedEffect(Unit) {
+            if (xpGained > 0 || coinsGained > 0) {
+                prefs.addXpAndCoins(xpGained, coinsGained)
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        audioManager.playClick()
+                        initNewGame()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Chơi Lại", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    audioManager.playClick()
+                    onBack()
+                }) {
+                    Text("Thoát", fontWeight = FontWeight.Bold)
+                }
+            },
+            title = {
+                Text(
+                    text = if (isNewRecord && highScore > 0) "🎉 KỶ LỤC MỚI XUẤT SẮC!" else "💥 KẾT THÚC CHUỖI CHUYỀN!",
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = if (isNewRecord) BambooGreen else FlagRed
+                )
+            },
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Bạn đã vượt qua chuỗi dài: $currentScore hạt 🥥",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Kỷ lục cũ: $highScore hạt",
+                        fontSize = 14.sp,
+                        color = EarthyBrown.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "+$xpGained XP & +$coinsGained Tiền vàng đã được tích lũy thưởng!",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = BambooGreen,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            },
+            containerColor = SurfaceNormal,
+            modifier = Modifier.shadow(16.dp, RoundedCornerShape(28.dp))
+        )
     }
 }
 
