@@ -38,15 +38,17 @@ fun PlayDapNieuScreen(
     var winningPotIndex by remember { mutableStateOf(3) }
     var brokenPotIndex by remember { mutableStateOf(-1) }
     
-    var clues = remember { mutableStateListOf<String>() }
+    val clues = remember { mutableStateListOf<String>() }
 
     var isVictory by remember { mutableStateOf(false) }
     var isGameOver by remember { mutableStateOf(false) }
 
-    // Danh sách 5 màu niêu đất khác nhau
-    // Index: 0, 1, 2, 3, 4
+    // 5 màu niêu đất và tên màu sắc tương ứng
     val potColors = remember { listOf(Color(0xFFB40006), Color(0xFF3E6137), Color(0xFFF57C00), Color(0xFF1976D2), Color(0xFF7B1FA2)) }
     val potColorNames = remember { listOf("Đỏ", "Xanh lá", "Cam", "Xanh dương", "Tím") }
+
+    // State lưu chỉ số màu thực tế tại vị trí i (0..4) để tránh bug logic
+    val potColorIndices = remember { mutableStateListOf(0, 1, 2, 3, 4) }
 
     fun generateClues() {
         clues.clear()
@@ -54,34 +56,82 @@ fun PlayDapNieuScreen(
         isVictory = false
         isGameOver = false
 
-        // Đặt ngẫu nhiên niêu chiến thắng (chứa vàng) từ ô 0..4
-        // Để dễ viết logic clues hợp lệ:
-        // Đặt cố định ở ô 2 hoặc 3 hoặc 4 để luật "bên phải đỏ" hoặc "bên trái" dễ tạo
-        winningPotIndex = Random.nextInt(1, 5) // Tránh ô 0 để dễ ra manh mối bên phải
+        // 1. Chọn ngẫu nhiên vị trí niêu chứa vàng (1..4)
+        winningPotIndex = Random.nextInt(1, 5)
 
-        // Đặt niêu màu Đỏ ở phía bên trái niêu thắng
-        val redIndex = Random.nextInt(0, winningPotIndex)
+        // 2. Phân bổ các màu sắc vào các vị trí
+        val positions = mutableMapOf<Int, Int>() // colorIndex -> position (0..4)
         
-        // Đặt niêu màu Xanh lá không nằm sát niêu thắng
-        var greenIndex = Random.nextInt(5)
-        while (greenIndex == winningPotIndex || greenIndex == winningPotIndex - 1 || greenIndex == winningPotIndex + 1 || greenIndex == redIndex) {
-            greenIndex = Random.nextInt(5)
+        // Đặt màu Đỏ (index 0) ở phía bên trái niêu thắng
+        val redPos = Random.nextInt(0, winningPotIndex)
+        positions[0] = redPos
+        positions[winningPotIndex] = -99 // Đánh dấu ô thắng tạm thời để tránh trùng
+
+        // Đặt màu Xanh lá (index 1) không nằm sát niêu thắng
+        val availableForGreen = (0..4).filter { 
+            it != winningPotIndex && 
+            it != winningPotIndex - 1 && 
+            it != winningPotIndex + 1 && 
+            it != redPos 
+        }
+        val greenPos = if (availableForGreen.isNotEmpty()) availableForGreen.random() else {
+            (0..4).filter { it != winningPotIndex && it != redPos }.random()
+        }
+        positions[1] = greenPos
+
+        // Phân bổ các màu còn lại (2: Cam, 3: Xanh dương, 4: Tím) vào các ô trống
+        val remainingColors = mutableListOf(2, 3, 4)
+        val filledPositions = setOf(redPos, greenPos, winningPotIndex)
+        val emptyPositions = (0..4).filter { !filledPositions.contains(it) }
+
+        for (pos in emptyPositions) {
+            if (remainingColors.isNotEmpty()) {
+                val color = remainingColors.removeAt(0)
+                positions[color] = pos
+            }
         }
 
-        // Tạo câu gợi ý logic loại trừ
+        // Cập nhật lại danh sách chỉ số màu hiển thị
+        val tempIndices = IntArray(5)
+        positions.forEach { (colorIdx, pos) ->
+            if (pos >= 0) {
+                tempIndices[pos] = colorIdx
+            }
+        }
+        val winColor = remainingColors.firstOrNull() ?: 2
+        tempIndices[winningPotIndex] = winColor
+        
+        potColorIndices.clear()
+        potColorIndices.addAll(tempIndices.toList())
+
+        // Tạo câu gợi ý logic loại trừ dựa trên vị trí thực tế
         clues.add("🔔 Niêu chứa vàng không nằm ở niêu số 1 (ô đầu tiên).")
         clues.add("🔔 Niêu chứa vàng nằm bên phải niêu màu Đỏ.")
         clues.add("🔔 Niêu chứa vàng không nằm sát cạnh niêu màu Xanh lá.")
 
         if (currentLevel >= 2) {
-            // Thêm manh mối số chẵn/lẻ
-            val parityText = if (winningPotIndex % 2 == 0) "số lẻ (1, 3 hoặc 5)" else "số chẵn (2 hoặc 4)" // 0-indexed thành 1-indexed
+            val parityText = if (winningPotIndex % 2 == 0) "số lẻ (1, 3 hoặc 5)" else "số chẵn (2 hoặc 4)"
             clues.add("🔔 Niêu chứa vàng nằm ở vị trí thứ $parityText trên dây treo.")
         }
         if (currentLevel >= 3) {
-            // Thêm manh mối màu sắc ô cạnh bên
-            val adjacentIndex = if (winningPotIndex > 0) winningPotIndex - 1 else winningPotIndex + 1
-            clues.add("🔔 Niêu sát cạnh niêu chứa vàng có màu ${potColorNames[adjacentIndex]}.")
+            val adjacentPos = if (winningPotIndex > 0) winningPotIndex - 1 else winningPotIndex + 1
+            val adjColorIdx = potColorIndices[adjacentPos]
+            clues.add("🔔 Niêu sát cạnh niêu chứa vàng có màu ${potColorNames[adjColorIdx]}.")
+        }
+        if (currentLevel >= 4) {
+            val bluePos = potColorIndices.indexOf(3)
+            if (bluePos != -1) {
+                val dist = kotlin.math.abs(winningPotIndex - bluePos)
+                clues.add("🔔 Niêu chứa vàng cách niêu màu Xanh dương $dist ô.")
+            }
+        }
+        if (currentLevel >= 5) {
+            val purplePos = potColorIndices.indexOf(4)
+            if (purplePos != -1) {
+                val purpleParity = purplePos % 2 == winningPotIndex % 2
+                val relationText = if (purpleParity) "cùng" else "khác"
+                clues.add("🔔 Niêu chứa vàng và niêu màu Tím có vị trí $relationText tính chất chẵn/lẻ.")
+            }
         }
     }
 
@@ -104,7 +154,7 @@ fun PlayDapNieuScreen(
         if (brokenPotIndex != -1 || isGameOver || isVictory) return
 
         brokenPotIndex = index
-        audioManager.playClick() // Tiếng đập vỡ niêu đất vang dội
+        audioManager.playClick()
 
         if (index == winningPotIndex) {
             isVictory = true
@@ -129,7 +179,7 @@ fun PlayDapNieuScreen(
                     },
                     actions = {
                         Text(
-                            text = "Màn $currentLevel/3 🏆",
+                            text = "Màn $currentLevel/5 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -180,7 +230,6 @@ fun PlayDapNieuScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Dây treo ngang
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -199,7 +248,9 @@ fun PlayDapNieuScreen(
                         for (i in 0 until 5) {
                             val isBroken = brokenPotIndex == i
                             val isWinning = winningPotIndex == i
-                            val color = potColors[i]
+                            val colorIdx = potColorIndices[i]
+                            val color = potColors[colorIdx]
+                            val colorName = potColorNames[colorIdx]
 
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -208,7 +259,6 @@ fun PlayDapNieuScreen(
                                         breakPot(i)
                                     }
                             ) {
-                                // Sợi dây treo nhỏ dọc xuống
                                 Box(
                                     modifier = Modifier
                                         .width(2.dp)
@@ -216,7 +266,6 @@ fun PlayDapNieuScreen(
                                         .background(OutlineBrown)
                                 )
 
-                                // Niêu đất
                                 Box(
                                     modifier = Modifier
                                         .size(60.dp)
@@ -255,7 +304,7 @@ fun PlayDapNieuScreen(
                                     color = EarthyBrown
                                 )
                                 Text(
-                                    text = "(${potColorNames[i]})",
+                                    text = "($colorName)",
                                     fontSize = 10.sp,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
                                 )
@@ -312,9 +361,10 @@ fun PlayDapNieuScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxWidth()
                     ) {
+                        val winningColorName = potColorNames[potColorIndices[winningPotIndex]]
                         Text("Rất tiếc! Chiếc niêu bạn vừa đập hoàn toàn rỗng không. Niêu chứa vàng thỏi thực sự là:", textAlign = TextAlign.Center)
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("Niêu số ${winningPotIndex + 1} (${potColorNames[winningPotIndex]}) 🏺", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = FlagRed)
+                        Text("Niêu số ${winningPotIndex + 1} ($winningColorName) 🏺", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = FlagRed)
                     }
                 },
                 containerColor = SurfaceNormal,
@@ -330,7 +380,7 @@ fun PlayDapNieuScreen(
                     Button(
                         onClick = {
                             audioManager.playClick()
-                            if (currentLevel < 3) {
+                            if (currentLevel < 5) {
                                 currentLevel++
                             } else {
                                 currentLevel = 1
@@ -339,7 +389,7 @@ fun PlayDapNieuScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (currentLevel < 3) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
+                        Text(if (currentLevel < 5) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {

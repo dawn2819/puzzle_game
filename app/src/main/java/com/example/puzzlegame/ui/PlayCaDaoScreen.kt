@@ -56,6 +56,16 @@ fun PlayCaDaoScreen(
                 id = "la_lanh",
                 correctParts = listOf("Lá lành", "đùm lá rách", "lá rách ít", "đùm lá rách nhiều"),
                 description = "Bài học đạo lý nhân văn giản dị của người Việt về sự tương trợ. Những người có cuộc sống tốt đẹp hơn giúp đỡ người khó khăn, và ngay cả những người nghèo khó cũng sẻ chia, an ủi lẫn nhau."
+            ),
+            CaDaoVerse(
+                id = "uong_nuoc",
+                correctParts = listOf("Uống nước", "nhớ nguồn", "ăn quả", "nhớ kẻ", "trồng cây"),
+                description = "Đạo lý tri ân truyền thống sâu sắc của người Việt. Nhắc nhở thế hệ sau luôn ghi nhớ công ơn dưỡng dục của cha mẹ, công lao dựng nước của tổ tiên và người đi trước."
+            ),
+            CaDaoVerse(
+                id = "mot_cay",
+                correctParts = listOf("Một cây", "làm chẳng", "nên non", "ba cây chụm lại", "nên hòn núi cao"),
+                description = "Bài học về sức mạnh tập thể và sự đoàn kết vô song. Nhấn mạnh một cá nhân riêng lẻ sẽ khó hoàn thành đại sự, nhưng sự đồng lòng nhất trí của nhiều người sẽ kiến tạo nên kỳ tích."
             )
         )
     }
@@ -126,6 +136,15 @@ fun PlayCaDaoScreen(
                         }) {
                             Text("◀", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
+                    },
+                    actions = {
+                        Text(
+                            text = "Màn ${currentVerseIndex + 1}/${verses.size} 🏆",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )

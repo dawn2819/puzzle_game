@@ -55,7 +55,9 @@ fun PlayBitMatDeScreen(
         val maxAttempts = when (currentLevel) {
             1 -> 6
             2 -> 5
-            else -> 4
+            3 -> 4
+            4 -> 3
+            else -> 2
         }
         attemptsLeft = maxAttempts
         guessedCells.clear()
@@ -126,8 +128,8 @@ fun PlayBitMatDeScreen(
         // Xác định hướng (Bắc, Nam, Đông, Tây)
         // Vị trí dê so với ô người chơi click
         val dirText = buildString {
-            // Level 3 thỉnh thoảng có nhiễu loạn thông tin hướng
-            val hasNoise = currentLevel == 3 && Random.nextFloat() < 0.25f
+            // Level 3+ thỉnh thoảng có nhiễu loạn thông tin hướng
+            val hasNoise = currentLevel >= 3 && Random.nextFloat() < (0.25f + (currentLevel - 3) * 0.15f)
             if (hasNoise) {
                 append("La bàn nhiễu loạn! 🌀")
             } else {
@@ -165,7 +167,7 @@ fun PlayBitMatDeScreen(
                     },
                     actions = {
                         Text(
-                            text = "Màn $currentLevel/3 🏆",
+                            text = "Màn $currentLevel/5 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -354,7 +356,7 @@ fun PlayBitMatDeScreen(
                     Button(
                         onClick = {
                             audioManager.playClick()
-                            if (currentLevel < 3) {
+                             if (currentLevel < 5) {
                                 currentLevel++
                             } else {
                                 currentLevel = 1
@@ -363,7 +365,7 @@ fun PlayBitMatDeScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (currentLevel < 3) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
+                        Text(if (currentLevel < 5) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {

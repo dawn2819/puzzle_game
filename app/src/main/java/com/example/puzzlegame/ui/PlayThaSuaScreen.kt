@@ -42,7 +42,6 @@ fun PlayThaSuaScreen(
     var isGameOver by remember { mutableStateOf(false) }
     var stepsCount by remember { mutableStateOf(0) }
 
-    // Bản đồ lau sậy cản trở (bụi sậy = walls)
     val obstacles = remember(currentLevel) {
         val set = mutableSetOf<Pair<Int, Int>>()
         when (currentLevel) {
@@ -56,12 +55,26 @@ fun PlayThaSuaScreen(
                 set.add(Pair(4, 2))
                 set.add(Pair(4, 3))
             }
-            else -> {
+            3 -> {
                 set.add(Pair(2, 0))
                 set.add(Pair(2, 1))
                 set.add(Pair(4, 3))
                 set.add(Pair(4, 4))
                 set.add(Pair(3, 2))
+            }
+            4 -> {
+                set.add(Pair(1, 1))
+                set.add(Pair(2, 3))
+                set.add(Pair(3, 1))
+                set.add(Pair(4, 3))
+                set.add(Pair(5, 1))
+            }
+            else -> {
+                set.add(Pair(2, 0))
+                set.add(Pair(2, 2))
+                set.add(Pair(2, 4))
+                set.add(Pair(4, 1))
+                set.add(Pair(4, 3))
             }
         }
         set
@@ -72,7 +85,9 @@ fun PlayThaSuaScreen(
         leeches = when (currentLevel) {
             1 -> listOf(Pair(0, 0))
             2 -> listOf(Pair(0, 0), Pair(0, 4))
-            else -> listOf(Pair(0, 0), Pair(0, 2), Pair(0, 4))
+            3 -> listOf(Pair(0, 0), Pair(0, 2), Pair(0, 4))
+            4 -> listOf(Pair(0, 0), Pair(0, 2), Pair(0, 4))
+            else -> listOf(Pair(0, 0), Pair(0, 1), Pair(0, 3), Pair(0, 4))
         }
         isVictory = false
         isGameOver = false
@@ -178,7 +193,7 @@ fun PlayThaSuaScreen(
                     },
                     actions = {
                         Text(
-                            text = "Màn $currentLevel/3 🏆",
+                            text = "Màn $currentLevel/5 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -398,7 +413,7 @@ fun PlayThaSuaScreen(
                     Button(
                         onClick = {
                             audioManager.playClick()
-                            if (currentLevel < 3) {
+                            if (currentLevel < 5) {
                                 currentLevel++
                             } else {
                                 currentLevel = 1
@@ -407,7 +422,7 @@ fun PlayThaSuaScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (currentLevel < 3) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
+                        Text(if (currentLevel < 5) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {

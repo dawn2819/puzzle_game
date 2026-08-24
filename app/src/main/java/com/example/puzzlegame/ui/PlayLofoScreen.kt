@@ -69,11 +69,23 @@ fun PlayLofoScreen(
             base[5][0] = -20 // Cổng dịch chuyển A
             base[2][2] = -21 // Cổng dịch chuyển B
         }
+        if (currentLevel >= 4) {
+            base[5][2] = -10 // Thêm bẫy bùn thứ 2
+        }
+        if (currentLevel == 5) {
+            base[2][0] = -10 // Thêm bẫy bùn thứ 3
+        }
         base
     }
 
     fun resetGame() {
-        movesLeft = if (currentLevel == 1) 15 else if (currentLevel == 2) 12 else 10
+        movesLeft = when (currentLevel) {
+            1 -> 15
+            2 -> 12
+            3 -> 10
+            4 -> 9
+            else -> 8
+        }
         playerPos = Pair(6, 1)
         nextTargetNumber = 2
         isVictory = false
@@ -171,7 +183,7 @@ fun PlayLofoScreen(
                     },
                     actions = {
                         Text(
-                            text = "Màn $currentLevel/3 🏆",
+                            text = "Màn $currentLevel/5 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -370,7 +382,7 @@ fun PlayLofoScreen(
                     Button(
                         onClick = {
                             audioManager.playClick()
-                            if (currentLevel < 3) {
+                            if (currentLevel < 5) {
                                 currentLevel++
                             } else {
                                 currentLevel = 1
@@ -379,7 +391,7 @@ fun PlayLofoScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (currentLevel < 3) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
+                        Text(if (currentLevel < 5) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {

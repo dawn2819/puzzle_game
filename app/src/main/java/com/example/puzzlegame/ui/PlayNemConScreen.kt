@@ -75,16 +75,26 @@ fun PlayNemConScreen(
         ringX = when (level) {
             1 -> 350f
             2 -> 420f
-            else -> 480f
+            3 -> 480f
+            4 -> 540f
+            else -> 600f
         }
         ringY = when (level) {
             1 -> 300f
             2 -> 220f
-            else -> 180f
+            3 -> 180f
+            4 -> 150f
+            else -> 120f
         }
 
-        // Tạo lực gió ngẫu nhiên
-        windSpeed = Random.nextFloat() * 8f - 4f // -4.0f to 4.0f
+        // Tạo lực gió ngẫu nhiên dựa trên level
+        windSpeed = when (level) {
+            1 -> 0f
+            2 -> Random.nextFloat() * 4f - 2f
+            3 -> Random.nextFloat() * 8f - 4f
+            4 -> Random.nextFloat() * 12f - 6f
+            else -> Random.nextFloat() * 18f - 9f
+        }
         isVictory = false
         isGameOver = false
     }
@@ -171,7 +181,7 @@ fun PlayNemConScreen(
                     },
                     actions = {
                         Text(
-                            text = "Màn $level/3 🏆",
+                            text = "Màn $level/5 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary,
@@ -397,7 +407,7 @@ fun PlayNemConScreen(
                     Button(
                         onClick = {
                             audioManager.playClick()
-                            if (level < 3) {
+                            if (level < 5) {
                                 level++
                             } else {
                                 level = 1
@@ -406,7 +416,7 @@ fun PlayNemConScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(if (level < 3) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
+                        Text(if (level < 5) "Màn Tiếp Theo" else "Chơi Lại Màn 1", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {
