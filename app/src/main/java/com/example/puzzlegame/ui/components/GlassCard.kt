@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
@@ -99,12 +100,27 @@ fun PremiumBackground(
     modifier: Modifier = Modifier,
     drawableId: Int? = com.example.puzzlegame.R.drawable.bg_game_general,
     bgDimAlpha: Float = 0.0f,
+    /** Screen-widths per second the background image scrolls left. 0 = static. */
+    scrollSpeed: Float = 0.05f,
     content: @Composable () -> Unit
 ) {
     val isDark = MaterialTheme.colorScheme.background == DarkBgStart
     val baseBgColor = if (isDark) DarkBgEnd else ParchmentBg
 
     val infiniteTransition = rememberInfiniteTransition(label = "bg_flow")
+
+    // Ảnh nền cuộn ngang: hai bản sao nối đuôi nhau, dịch 0..1 chiều rộng rồi lặp lại
+    val scrollFraction by if (scrollSpeed > 0f) {
+        infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween((1000f / scrollSpeed).toInt(), easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bg_scroll"
+        )
+    } else remember { mutableFloatStateOf(0f) }
 
     // Di chuyển chậm hai cụm sáng neon tròn
     val blob1X by infiniteTransition.animateFloat(
@@ -274,12 +290,22 @@ fun PremiumBackground(
     ) {
         // Vẽ hình nền tùy chỉnh nếu có
         drawableId?.let { resId ->
-            Image(
-                painter = painterResource(id = resId),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            val painter = painterResource(id = resId)
+            // Bản 1 trượt sang trái, bản 2 (lật gương) theo sau nên mép nối liền mạch; cuộn qua lại
+            for (copy in 0..1) {
+                if (copy == 1 && scrollSpeed <= 0f) break
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = (copy - scrollFraction) * size.width
+                            scaleX = if (copy == 1) -1f else 1f
+                        }
+                )
+            }
         }
 
         if (bgDimAlpha > 0f) {

@@ -10,12 +10,19 @@ import com.example.puzzlegame.ui.*
 fun MainNavigation(
     onDarkModeChanged: (Boolean) -> Unit
 ) {
-    val backStack = rememberNavBackStack(Main)
+    val backStack = rememberNavBackStack(Splash)
 
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
+            // 0. Splash: thay thế chính nó bằng Main để Back không quay lại splash
+            entry<Splash> {
+                SplashScreen(onFinished = {
+                    backStack.clear()
+                    backStack.add(Main)
+                })
+            }
             // 1. Màn hình chính
             entry<Main> {
                 MainMenuScreen(onNavigate = { navKey -> backStack.add(navKey) })
