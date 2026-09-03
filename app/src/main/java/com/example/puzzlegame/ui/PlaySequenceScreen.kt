@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -332,10 +333,20 @@ fun ChoiChuyenGame(onBack: () -> Unit, audioManager: AudioManager) {
                 val offsetY = (Math.sin(angleRad) * 65).dp
                 val isFlashing = flashingNodeIndex == i
 
+                val animatedScale by animateFloatAsState(
+                    targetValue = if (isFlashing) 1.25f else 1.0f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    ),
+                    label = "node_scale_$i"
+                )
+
                 Box(
                     modifier = Modifier
                         .offset(x = offsetX, y = offsetY)
                         .size(46.dp)
+                        .graphicsLayer(scaleX = animatedScale, scaleY = animatedScale)
                         .shadow(if (isFlashing) 10.dp else 2.dp, CircleShape)
                         .clip(CircleShape)
                         .background(if (isFlashing) StarGold else Color.White)
@@ -452,6 +463,17 @@ fun TapTamVongGame(onWin: () -> Unit, audioManager: AudioManager) {
     var showPebbleInHand by remember { mutableStateOf<Boolean?>(null) } // null: chưa đoán, true: trúng, false: sai
     var chosenHandIsLeft by remember { mutableStateOf<Boolean?>(null) }
 
+    val scaleLeft by animateFloatAsState(
+        targetValue = if (isShuffling && correctHandIsLeft) 1.2f else if (chosenHandIsLeft == true) 1.15f else 1.0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "hand_left_scale"
+    )
+    val scaleRight by animateFloatAsState(
+        targetValue = if (isShuffling && !correctHandIsLeft) 1.2f else if (chosenHandIsLeft == false) 1.15f else 1.0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "hand_right_scale"
+    )
+
     fun startShuffle() {
         coroutineScope.launch {
             isShuffling = true
@@ -513,6 +535,7 @@ fun TapTamVongGame(onWin: () -> Unit, audioManager: AudioManager) {
                 Box(
                     modifier = Modifier
                         .size(80.dp)
+                        .graphicsLayer(scaleX = scaleLeft, scaleY = scaleLeft)
                         .clip(RoundedCornerShape(16.dp))
                         .background(
                             if (chosenHandIsLeft == true) {
@@ -548,6 +571,7 @@ fun TapTamVongGame(onWin: () -> Unit, audioManager: AudioManager) {
                 Box(
                     modifier = Modifier
                         .size(80.dp)
+                        .graphicsLayer(scaleX = scaleRight, scaleY = scaleRight)
                         .clip(RoundedCornerShape(16.dp))
                         .background(
                             if (chosenHandIsLeft == false) {

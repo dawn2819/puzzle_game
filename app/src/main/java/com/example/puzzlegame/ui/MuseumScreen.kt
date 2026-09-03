@@ -27,6 +27,7 @@ import com.example.puzzlegame.data.MuseumRepository
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +72,7 @@ fun MuseumScreen(
         }
     }
 
-    PremiumBackground {
+    PremiumBackground(drawableId = R.drawable.bg_museum) {
         Scaffold(
             topBar = {
                 TopAppBar(

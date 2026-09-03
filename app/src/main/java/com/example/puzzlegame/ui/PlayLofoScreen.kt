@@ -14,9 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,10 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -241,15 +247,12 @@ fun PlayLofoScreen(
                     val cellW = boardWidth / 3
                     val cellH = boardHeight / 7
 
-                    // Vẽ nét vẽ phấn lò cò
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        val stroke = Stroke(
-                            width = 2.dp.toPx(),
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                        )
-                        // Kẻ viền phấn xung quanh các ô có tồn tại lò cò để mô tả vẽ phấn sân trường
-                        // Để đơn giản, chỉ vẽ nét phấn lò cò bao quanh
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.lo_co_grid_bg),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize()
+                    )
 
                     // Đặt các ô lên
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -270,14 +273,14 @@ fun PlayLofoScreen(
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(
                                             when {
-                                                isPlayerHere -> BambooGreen.copy(alpha = 0.3f)
+                                                isPlayerHere -> BambooGreen.copy(alpha = 0.15f)
                                                 cellVal == -10 -> Color(0xFF5D403B).copy(alpha = 0.2f) // Màu bùn
                                                 cellVal == -20 || cellVal == -21 -> Color.Blue.copy(alpha = 0.15f) // Cổng dịch chuyển
                                                 else -> Color.White.copy(alpha = 0.5f) // Ô lò cò mặc định
                                             }
                                         )
                                         .border(
-                                            width = if (isPlayerHere) 2.5.dp else 1.5.dp,
+                                            width = if (isPlayerHere) 2.dp else 1.5.dp,
                                             color = when {
                                                 isPlayerHere -> BambooGreen
                                                 cellVal == -10 -> Color(0xFFBA1A1A)
@@ -302,19 +305,59 @@ fun PlayLofoScreen(
                                                 )
                                             }
                                             cellVal == -10 -> {
-                                                Text("💩 Bùn", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF5D403B))
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.lo_co_mud),
+                                                    contentDescription = null,
+                                                    contentScale = ContentScale.Fit,
+                                                    modifier = Modifier.size(32.dp)
+                                                )
                                             }
                                             cellVal == -20 || cellVal == -21 -> {
                                                 Text("🌀 Cổng", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Blue)
                                             }
                                         }
-                                        
-                                        if (isPlayerHere) {
-                                            Text("👣 Bạn ở đây", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = BambooGreen)
-                                        }
                                     }
                                 }
                             }
+                        }
+
+                        // Vẽ dấu chân dép cao su nhảy lò cò có hoạt ảnh trượt lò xo đàn hồi (Spring Physics)
+                        val playerX by animateDpAsState(
+                            targetValue = cellW * playerPos.second,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
+                            label = "player_x"
+                        )
+                        val playerY by animateDpAsState(
+                            targetValue = cellH * playerPos.first,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
+                            label = "player_y"
+                        )
+
+                        var scalePlayer by remember { mutableStateOf(1f) }
+                        val animatedScalePlayer by animateFloatAsState(
+                            targetValue = scalePlayer,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                            label = "player_scale"
+                        )
+                        LaunchedEffect(playerPos) {
+                            scalePlayer = 1.5f
+                            delay(120)
+                            scalePlayer = 1.0f
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .offset(x = playerX, y = playerY)
+                                .size(cellW, cellH)
+                                .graphicsLayer(scaleX = animatedScalePlayer, scaleY = animatedScalePlayer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.lo_co_sandal),
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.size(36.dp)
+                            )
                         }
                     }
                 }

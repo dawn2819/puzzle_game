@@ -24,6 +24,10 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -278,11 +282,27 @@ fun PlayBitMatDeScreen(
                                             },
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(
-                                            text = symbol,
-                                            fontSize = 20.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                        if (!isGuessed) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.de_grass_tile),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.FillBounds,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        } else if (symbol == "🐐") {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.de_goat_hidden),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Fit,
+                                                modifier = Modifier.fillMaxSize().padding(4.dp)
+                                            )
+                                        } else {
+                                            Text(
+                                                text = symbol,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
                                     }
                                 }
                             }

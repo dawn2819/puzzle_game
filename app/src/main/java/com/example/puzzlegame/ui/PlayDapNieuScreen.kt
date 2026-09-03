@@ -22,6 +22,9 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -266,32 +269,32 @@ fun PlayDapNieuScreen(
                                         .background(OutlineBrown)
                                 )
 
+                                val potDrawable = when (colorIdx) {
+                                    0 -> R.drawable.nieu_pot_orange
+                                    1 -> R.drawable.nieu_pot_blue
+                                    2 -> R.drawable.nieu_pot_purple
+                                    else -> R.drawable.nieu_pot_red
+                                }
+
                                 Box(
                                     modifier = Modifier
-                                        .size(60.dp)
-                                        .shadow(4.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            if (isBroken) Color.Transparent else color
-                                        )
-                                        .border(
-                                            2.dp,
-                                            if (isBroken) Color.Transparent else Color.White.copy(alpha = 0.5f),
-                                            RoundedCornerShape(16.dp)
-                                        ),
+                                        .size(64.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (isBroken) {
-                                        Text(
-                                            text = if (isWinning) "🪙 Vàng!" else "💥 Vỡ",
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = if (isWinning) StarGold else FlagRed
+                                        val brokenRes = if (isWinning) R.drawable.nieu_gold else R.drawable.nieu_broken
+                                        Image(
+                                            painter = painterResource(id = brokenRes),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Fit,
+                                            modifier = Modifier.fillMaxSize()
                                         )
                                     } else {
-                                        Text(
-                                            text = "🏺",
-                                            fontSize = 28.sp
+                                        Image(
+                                            painter = painterResource(id = potDrawable),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Fit,
+                                            modifier = Modifier.fillMaxSize()
                                         )
                                     }
                                 }

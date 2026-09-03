@@ -28,6 +28,9 @@ import com.example.puzzlegame.*
 import com.example.puzzlegame.audio.AudioManager
 import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.theme.*
+import com.example.puzzlegame.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 
@@ -94,7 +97,7 @@ fun MainMenuScreen(
         }
     }
 
-    PremiumBackground {
+    PremiumBackground(drawableId = R.drawable.bg_main_menu, bgDimAlpha = 0.45f) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -113,26 +116,20 @@ fun MainMenuScreen(
                     .scale(titleScale),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "HỒN VIỆT",
-                    fontSize = 42.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = FlagRed,
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 4.sp,
-                    style = LocalTextStyle.current.copy(
-                        shadow = Shadow(
-                            color = FlagRed.copy(alpha = glowAlpha),
-                            offset = Offset(0f, 0f),
-                            blurRadius = 30f
-                        )
-                    )
+                Image(
+                    painter = painterResource(id = R.drawable.logo_hon_viet),
+                    contentDescription = "Hồn Việt Logo",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .height(110.dp)
+                        .padding(horizontal = 16.dp)
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Vietnamese Puzzle Universe",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = EarthyBrown.copy(alpha = 0.6f),
+                    color = EarthyBrown.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center,
                     letterSpacing = 2.sp
                 )
@@ -215,40 +212,44 @@ fun MainMenuScreen(
                 }
             }
 
-            // --- NÚT CHƠI TIẾP (Nếu có trận dở dang) ---
             if (hasContinue) {
-                Button(
-                    onClick = {
-                        audioManager.playClick()
-                        val type = prefs.getContinueGameType()
-                        val data = prefs.getContinueGameData()
-                        if (type != null && data != null) {
-                            when (type) {
-                                "2048" -> {
-                                    val size = data.substringBefore("|").toInt()
-                                    onNavigate(Play2048(size, isRestore = true))
-                                }
-                                "SUDOKU" -> {
-                                    val difficulty = data.substringBefore("|")
-                                    onNavigate(PlaySudoku(difficulty, isRestore = true))
-                                }
-                                "SOKOBAN" -> {
-                                    val levelIndex = data.substringBefore("|").toInt()
-                                    onNavigate(PlaySokoban(levelIndex, isRestore = true))
-                                }
-                                "NONOGRAM" -> {
-                                    val levelIndex = data.substringBefore("|").toInt()
-                                    onNavigate(PlayNonogram(levelIndex, isRestore = true))
-                                }
-                            }
-                        }
-                    },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
-                        .shadow(4.dp, RoundedCornerShape(12.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = StarGold)
+                        .height(56.dp)
+                        .clickable {
+                            audioManager.playClick()
+                            val type = prefs.getContinueGameType()
+                            val data = prefs.getContinueGameData()
+                            if (type != null && data != null) {
+                                when (type) {
+                                    "2048" -> {
+                                        val size = data.substringBefore("|").toInt()
+                                        onNavigate(Play2048(size, isRestore = true))
+                                    }
+                                    "SUDOKU" -> {
+                                        val difficulty = data.substringBefore("|")
+                                        onNavigate(PlaySudoku(difficulty, isRestore = true))
+                                    }
+                                    "SOKOBAN" -> {
+                                        val levelIndex = data.substringBefore("|").toInt()
+                                        onNavigate(PlaySokoban(levelIndex, isRestore = true))
+                                    }
+                                    "NONOGRAM" -> {
+                                        val levelIndex = data.substringBefore("|").toInt()
+                                        onNavigate(PlayNonogram(levelIndex, isRestore = true))
+                                    }
+                                }
+                            }
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.btn_bamboo_normal),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize()
+                    )
                     Text(
                         text = "⏳ CHƠI TIẾP VÁN DỞ DANG (" + prefs.getContinueGameType() + ")",
                         fontWeight = FontWeight.ExtraBold,
@@ -258,119 +259,116 @@ fun MainMenuScreen(
                 }
             }
 
-            // --- BENTO GRID MÀN HÌNH CHÍNH ---
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Hàng 1: CHƠI GAME & BẢO TÀNG DI SẢN (Bento lớn)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Bento 1: Game Selection
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(SurfaceNormal)
-                            .border(2.dp, OutlineBrown, RoundedCornerShape(20.dp))
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(SelectGame)
-                            }
-                            .padding(16.dp),
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("🧠", fontSize = 44.sp)
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.panel_bento_wood),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
                             Text("TRÒ CHƠI", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = FlagRed)
                             Text("Hệ sinh thái game", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
                         }
                     }
 
-                    // Bento 2: Bảo tàng di sản
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(SurfaceNormal)
-                            .border(2.dp, BambooGreen, RoundedCornerShape(20.dp))
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(Museum)
-                            }
-                            .padding(16.dp),
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("🏯", fontSize = 44.sp)
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.panel_bento_wood),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
                             Text("BẢO TÀNG", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = BambooGreen)
                             Text("Khám phá văn hóa", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
                         }
                     }
                 }
 
-                // Hàng 2: ĐIỂM SỐ & CÀI ĐẶT (Bento nhỏ hơn)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Bento 3: Scores
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .height(80.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(SurfaceNormal)
-                            .border(1.5.dp, OutlineBrown, RoundedCornerShape(16.dp))
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(Scores)
-                            }
-                            .padding(12.dp),
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Image(
+                            painter = painterResource(id = R.drawable.panel_bento_wood),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(horizontal = 12.dp)
                         ) {
-                            Text("🏆", fontSize = 24.sp)
-                            Column {
-                                Text("BẢNG ĐIỂM", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
-                                Text("Thành tích cá nhân", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
-                            }
+                            Text("BẢNG ĐIỂM", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
+                            Text("Thành tích cá nhân", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
                         }
                     }
 
-                    // Bento 4: Options
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .height(80.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(SurfaceNormal)
-                            .border(1.5.dp, OutlineBrown, RoundedCornerShape(16.dp))
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(Options)
-                            }
-                            .padding(12.dp),
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Image(
+                            painter = painterResource(id = R.drawable.panel_bento_wood),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(horizontal = 12.dp)
                         ) {
-                            Text("⚙️", fontSize = 24.sp)
-                            Column {
-                                Text("CÀI ĐẶT", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
-                                Text("Âm lượng & Giao diện", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
-                            }
+                            Text("CÀI ĐẶT", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
+                            Text("Âm lượng & Giao diện", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
                         }
                     }
                 }

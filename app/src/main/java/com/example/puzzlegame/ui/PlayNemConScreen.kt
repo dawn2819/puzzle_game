@@ -28,6 +28,10 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
@@ -221,7 +225,7 @@ fun PlayNemConScreen(
                 }
 
                 // --- SÂN NÉM CÒN VẬT LÝ CANVAS COMPONENT ---
-                Box(
+                BoxWithConstraints(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -233,7 +237,6 @@ fun PlayNemConScreen(
                             if (isBallFlying || isGameOver || isVictory) return@pointerInput
                             detectDragGestures(
                                 onDragStart = { offset ->
-                                    // Bắt đầu kéo lùi quả còn để bắn
                                     dragStart = offset
                                     dragCurrent = offset
                                 },
@@ -245,7 +248,6 @@ fun PlayNemConScreen(
                                     val start = dragStart
                                     val current = dragCurrent
                                     if (start != null && current != null) {
-                                        // Véc tơ bắn tỷ lệ thuận với độ kéo lùi
                                         val vx = (start.x - current.x) * 0.4f
                                         val vy = (start.y - current.y) * 0.4f
                                         launchBall(vx, vy)
@@ -256,50 +258,29 @@ fun PlayNemConScreen(
                             )
                         }
                 ) {
+                    val w = maxWidth
+                    val h = maxHeight
+                    val scaleX = w.value / 600f
+                    val scaleY = h.value / 700f
+
+                    val poleX = (ringX * scaleX).dp
+                    val poleRingY = (ringY * scaleY).dp
+                    val drawBallX = (ballX * scaleX).dp
+                    val drawBallY = (ballY * scaleY).dp
+
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val widthPx = size.width
                         val heightPx = size.height
 
-                        // Quy đổi tỷ lệ vẽ từ tọa độ lý thuyết
-                        val scaleX = widthPx / 600f
-                        val scaleY = heightPx / 700f
+                        val sX = widthPx / 600f
+                        val sY = heightPx / 700f
 
-                        // 1. Vẽ cột tre treo vòng còn
-                        val poleX = ringX * scaleX
-                        val poleRingY = ringY * scaleY
-                        // Thân cột tre
-                        drawLine(
-                            color = Color(0xFF3E6137),
-                            start = Offset(poleX, poleRingY + ringRadius * scaleY),
-                            end = Offset(poleX, heightPx),
-                            strokeWidth = 4.dp.toPx()
-                        )
-                        // Vòng tròn tre mục tiêu ném còn
-                        drawCircle(
-                            color = FlagRed,
-                            radius = ringRadius * scaleX,
-                            center = Offset(poleX, poleRingY),
-                            style = Stroke(width = 3.dp.toPx())
-                        )
-                        // Vòng tre tâm điểm
-                        drawCircle(
-                            color = StarGold,
-                            radius = 6.dp.toPx(),
-                            center = Offset(poleX, poleRingY)
-                        )
-
-                        // 2. Vẽ quả Còn (Vật ném có quả còn vải tua rua)
-                        val drawBallX = ballX * scaleX
-                        val drawBallY = ballY * scaleY
-                        
                         if (!isBallFlying && dragStart != null && dragCurrent != null) {
-                            // Vẽ véc tơ lực kéo bắn (Trajectory guide line)
                             val start = dragStart!!
                             val curr = dragCurrent!!
                             val diffX = start.x - curr.x
                             val diffY = start.y - curr.y
 
-                            // Vẽ đường chấm dự báo quỹ đạo
                             var tempX = ballX
                             var tempY = ballY
                             var tempVx = diffX * 0.4f
@@ -308,40 +289,51 @@ fun PlayNemConScreen(
                                 val nextTx = tempX + tempVx * 0.08f
                                 val nextTy = tempY + tempVy * 0.08f
                                 tempVx += windSpeed * 0.15f
-                                tempVy += 12f // Trọng lực
+                                tempVy += 12f
 
                                 drawLine(
-                                    color = Color.Gray.copy(alpha = 0.5f),
-                                    start = Offset(tempX * scaleX, tempY * scaleY),
-                                    end = Offset(nextTx * scaleX, nextTy * scaleY),
-                                    strokeWidth = 2.dp.toPx(),
+                                    color = FlagRed.copy(alpha = 0.6f),
+                                    start = Offset(tempX * sX, tempY * sY),
+                                    end = Offset(nextTx * sX, nextTy * sY),
+                                    strokeWidth = 3.dp.toPx(),
                                     cap = StrokeCap.Round
                                 )
                                 tempX = nextTx
                                 tempY = nextTy
                             }
                         }
-
-                        // Vẽ quả còn rực rỡ sắc màu di sản Việt
-                        drawCircle(
-                            color = FlagRed,
-                            radius = 12.dp.toPx(),
-                            center = Offset(drawBallX, drawBallY)
-                        )
-                        // Vẽ tua rua vải quả còn bám theo
-                        drawLine(
-                            color = StarGold,
-                            start = Offset(drawBallX, drawBallY + 8.dp.toPx()),
-                            end = Offset(drawBallX - 8.dp.toPx(), drawBallY + 22.dp.toPx()),
-                            strokeWidth = 1.5.dp.toPx()
-                        )
-                        drawLine(
-                            color = BambooGreen,
-                            start = Offset(drawBallX, drawBallY + 8.dp.toPx()),
-                            end = Offset(drawBallX + 8.dp.toPx(), drawBallY + 22.dp.toPx()),
-                            strokeWidth = 1.5.dp.toPx()
-                        )
                     }
+
+                    // 1. Cột tre
+                    Image(
+                        painter = painterResource(id = R.drawable.con_bamboo_pole),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .offset(x = poleX - 10.dp, y = poleRingY)
+                            .width(20.dp)
+                            .fillMaxHeight()
+                    )
+
+                    // 2. Vòng tre ném còn
+                    Image(
+                        painter = painterResource(id = R.drawable.con_bamboo_ring),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .offset(x = poleX - 36.dp, y = poleRingY - 36.dp)
+                            .size(72.dp)
+                    )
+
+                    // 3. Quả Còn ngũ sắc
+                    Image(
+                        painter = painterResource(id = R.drawable.con_ball),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .offset(x = drawBallX - 20.dp, y = drawBallY - 20.dp)
+                            .size(40.dp)
+                    )
                 }
 
                 // Hướng dẫn vuốt kéo bắn quả còn

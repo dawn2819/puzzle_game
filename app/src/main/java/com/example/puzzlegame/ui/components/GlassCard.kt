@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import com.example.puzzlegame.theme.*
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -94,6 +97,8 @@ class PhysicsParticle(
 @Composable
 fun PremiumBackground(
     modifier: Modifier = Modifier,
+    drawableId: Int? = com.example.puzzlegame.R.drawable.bg_game_general,
+    bgDimAlpha: Float = 0.0f,
     content: @Composable () -> Unit
 ) {
     val isDark = MaterialTheme.colorScheme.background == DarkBgStart
@@ -247,7 +252,6 @@ fun PremiumBackground(
                 canvasHeight = size.height.toFloat()
             }
             .pointerInput(Unit) {
-                // Sử dụng awaitPointerEventScope để theo dõi vị trí ngón tay thụ động (không chặn sự kiện của các con)
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
@@ -268,38 +272,59 @@ fun PremiumBackground(
                 }
             }
     ) {
+        // Vẽ hình nền tùy chỉnh nếu có
+        drawableId?.let { resId ->
+            Image(
+                painter = painterResource(id = resId),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        if (bgDimAlpha > 0f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = bgDimAlpha))
+            )
+        }
+
         Canvas(modifier = Modifier.fillMaxSize()) {
             val width = size.width
             val height = size.height
             val minSize = minOf(width, height)
 
-            // Vầng sáng màu Primary Neon
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        PrimaryNeon.copy(alpha = if (isDark) 0.15f else 0.12f),
-                        Color.Transparent
+            // Chỉ vẽ vầng sáng neon nếu KHÔNG có ảnh nền tùy chỉnh
+            if (drawableId == null) {
+                // Vầng sáng màu Primary Neon
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            PrimaryNeon.copy(alpha = if (isDark) 0.15f else 0.12f),
+                            Color.Transparent
+                        ),
+                        center = Offset(width * blob1X, height * blob1Y),
+                        radius = minSize * 0.6f
                     ),
                     center = Offset(width * blob1X, height * blob1Y),
                     radius = minSize * 0.6f
-                ),
-                center = Offset(width * blob1X, height * blob1Y),
-                radius = minSize * 0.6f
-            )
+                )
 
-            // Vầng sáng màu Tertiary Neon
-            drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        TertiaryNeon.copy(alpha = if (isDark) 0.15f else 0.10f),
-                        Color.Transparent
+                // Vầng sáng màu Tertiary Neon
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            TertiaryNeon.copy(alpha = if (isDark) 0.15f else 0.10f),
+                            Color.Transparent
+                        ),
+                        center = Offset(width * blob2X, height * blob2Y),
+                        radius = minSize * 0.7f
                     ),
                     center = Offset(width * blob2X, height * blob2Y),
                     radius = minSize * 0.7f
-                ),
-                center = Offset(width * blob2X, height * blob2Y),
-                radius = minSize * 0.7f
-            )
+                )
+            }
 
             // Vẽ các bong bóng tương tác vật lý va chạm
             particles.forEach { p ->

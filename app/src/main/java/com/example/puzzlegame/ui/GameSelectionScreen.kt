@@ -17,14 +17,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.navigation3.runtime.NavKey
 import com.example.puzzlegame.*
 import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 import com.example.puzzlegame.audio.AudioManager
-import com.example.puzzlegame.theme.FlagRed
+import com.example.puzzlegame.theme.*
+import androidx.compose.foundation.Image
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import com.example.puzzlegame.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +65,7 @@ fun GameSelectionScreen(
         }
     }
 
-    PremiumBackground {
+    PremiumBackground(drawableId = R.drawable.bg_selection, bgDimAlpha = 0.35f) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -131,17 +138,18 @@ fun GameSelectionScreen(
 
                     when (selectedTab) {
                         0 -> {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier.weight(1f)
+                                verticalAlignment = Alignment.CenterVertically,
+                                contentPadding = PaddingValues(horizontal = 16.dp)
                             ) {
                                 item {
                                     GameCard(
                                         title = "2048",
                                         description = "Trượt gộp ô số",
-                                        color = MaterialTheme.colorScheme.primary,
                                         onClick = {
                                             audioManager.playClick()
                                             selectedGameType = "2048"
@@ -152,7 +160,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "SUDOKU",
                                         description = "Điền số logic 9x9",
-                                        color = MaterialTheme.colorScheme.secondary,
                                         onClick = {
                                             audioManager.playClick()
                                             selectedGameType = "SUDOKU"
@@ -163,7 +170,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "SOKOBAN",
                                         description = "Đẩy hộp vào kho",
-                                        color = MaterialTheme.colorScheme.tertiary,
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlaySokoban(-1))
@@ -174,7 +180,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "NONOGRAM",
                                         description = "Giải đố tô tranh pixel",
-                                        color = Color(0xFF10B981),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayNonogram(-1))
@@ -185,17 +190,18 @@ fun GameSelectionScreen(
                         }
 
                         1 -> {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier.weight(1f)
+                                verticalAlignment = Alignment.CenterVertically,
+                                contentPadding = PaddingValues(horizontal = 16.dp)
                             ) {
                                 item {
                                     GameCard(
                                         title = "Ô ĂN QUAN",
                                         description = "Rải sỏi ăn dân & quan",
-                                        color = Color(0xFFD84315),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayOAnQuan)
@@ -206,7 +212,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "CỜ GÁNH",
                                         description = "Vây chẹt đổi màu cờ",
-                                        color = Color(0xFF2E7D32),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayCoGanh)
@@ -217,7 +222,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "RỒNG RẮN",
                                         description = "Uốn lượn ngậm ngọc rồng",
-                                        color = Color(0xFFF57F17),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayDragonSnake)
@@ -228,7 +232,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "NHẢY LÒ CÒ",
                                         description = "Nhảy ô lò cò 1-9",
-                                        color = Color(0xFFAD1457),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayLofo)
@@ -239,17 +242,18 @@ fun GameSelectionScreen(
                         }
 
                         2 -> {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier.weight(1f)
+                                verticalAlignment = Alignment.CenterVertically,
+                                contentPadding = PaddingValues(horizontal = 16.dp)
                             ) {
                                 item {
                                     GameCard(
                                         title = "THẢ ĐỈA",
                                         description = "Lội sông né đỉa đuổi bám",
-                                        color = Color(0xFF00838F),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayThaSua)
@@ -260,7 +264,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "BẮT DÊ",
                                         description = "Dò tìm dê ẩn nấp",
-                                        color = Color(0xFF4E342E),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayBitMatDe)
@@ -271,7 +274,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "ĐỐ CHỮ",
                                         description = "Tìm ô chữ ẩm thực Việt",
-                                        color = Color(0xFF283593),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayWordPuzzle)
@@ -282,7 +284,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "CHƠI CHUYỀN",
                                         description = "Chuỗi nhấp nháy hạt gỗ",
-                                        color = Color(0xFF37474F),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlaySequence)
@@ -293,7 +294,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "ĐẬP NIÊU",
                                         description = "Đập niêu đất bằng suy luận",
-                                        color = Color(0xFFEF6C00),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayDapNieu)
@@ -304,7 +304,6 @@ fun GameSelectionScreen(
                                     GameCard(
                                         title = "NÉM CÒN",
                                         description = "Ném còn bay chịu sức gió",
-                                        color = Color(0xFFC2185B),
                                         onClick = {
                                             audioManager.playClick()
                                             onNavigate(PlayNemCon)
@@ -544,31 +543,52 @@ fun GameSelectionScreen(
 fun GameCard(
     title: String,
     description: String,
-    color: Color,
     onClick: () -> Unit
 ) {
-    Card(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
+            .width(280.dp)
+            .height(180.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.15f)),
-        border = CardDefaults.outlinedCardBorder(true).copy(
-            brush = androidx.compose.ui.graphics.SolidColor(color.copy(alpha = 0.5f)),
-            width = 1.dp
-        )
+        contentAlignment = Alignment.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.frame_scroll_banner),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 32.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(title, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = color)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(description, fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), textAlign = TextAlign.Center)
+            Text(
+                text = title,
+                fontSize = 22.sp,
+                fontFamily = NomFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                color = FlagRed,
+                style = androidx.compose.ui.text.TextStyle(
+                    shadow = Shadow(
+                        color = Color(0x60000000),
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                ),
+                letterSpacing = 1.5.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = description,
+                fontSize = 13.sp,
+                fontFamily = NomFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = EarthyBrown.copy(alpha = 0.85f),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

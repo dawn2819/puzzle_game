@@ -2,6 +2,7 @@ package com.example.puzzlegame.ui
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,10 @@ import com.example.puzzlegame.ui.components.PremiumBackground
 import com.example.puzzlegame.ui.components.ConfettiEffect
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.audio.AudioManager
+import com.example.puzzlegame.R
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
@@ -410,12 +415,19 @@ fun Play2048Screen(
                     val cellSpacing = 6.dp
                     val cellSize = (boardWidth - (cellSpacing * (size + 1))) / size
 
-                    // 1. Vẽ các ô trống nền tĩnh làm background
+                    Image(
+                        painter = painterResource(id = R.drawable.panel_bento_wood),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    // 1. Vẽ các ô trống nền tĩnh nẹp tre mộc mạc
                     Column(
                         verticalArrangement = Arrangement.spacedBy(cellSpacing),
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(cellSpacing)
+                            .padding(cellSpacing + 8.dp)
                     ) {
                         repeat(size) {
                             Row(horizontalArrangement = Arrangement.spacedBy(cellSpacing)) {
@@ -423,8 +435,9 @@ fun Play2048Screen(
                                     Box(
                                         modifier = Modifier
                                             .size(cellSize)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(SurfaceDim)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(Color(0x254A2E14))
+                                            .border(1.5.dp, OutlineBrown.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
                                     )
                                 }
                             }
@@ -476,20 +489,30 @@ fun Play2048Screen(
                                     .background(getTileColor(tile.displayValue)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "${tile.displayValue}",
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = when {
-                                        tile.displayValue >= 1024 -> 16.sp
-                                        tile.displayValue >= 128 -> 20.sp
-                                        else -> 24.sp
-                                    },
-                                    color = when (tile.displayValue) {
-                                        2, 4 -> Color(0xFF92400E)
-                                        1024 -> EarthyBrown
-                                        else -> Color.White
-                                    }
-                                )
+                                val foodRes = getTileFoodDrawable(tile.displayValue)
+                                if (foodRes != null) {
+                                    Image(
+                                        painter = painterResource(id = foodRes),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier.fillMaxSize().padding(4.dp)
+                                    )
+                                } else {
+                                    Text(
+                                        text = "${tile.displayValue}",
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = when {
+                                            tile.displayValue >= 1024 -> 16.sp
+                                            tile.displayValue >= 128 -> 20.sp
+                                            else -> 24.sp
+                                        },
+                                        color = when (tile.displayValue) {
+                                            2, 4 -> Color(0xFF92400E)
+                                            1024 -> EarthyBrown
+                                            else -> Color.White
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -635,6 +658,23 @@ fun getTileColor(value: Int): Color {
         1024 -> Tile1024
         2048 -> Tile2048
         else -> TileHigher
+    }
+}
+
+fun getTileFoodDrawable(value: Int): Int? {
+    return when (value) {
+        2 -> R.drawable.food_2_tra_da
+        4 -> R.drawable.food_4_banh_mi
+        8 -> R.drawable.food_8_com_vong
+        16 -> R.drawable.food_16_bun_cha
+        32 -> R.drawable.food_32_pho_bo
+        64 -> R.drawable.food_64_nem_ran
+        128 -> R.drawable.food_128_banh_chung
+        256 -> R.drawable.food_256_ca_kho
+        512 -> R.drawable.food_512_che_cung_dinh
+        1024 -> R.drawable.food_1024_nem_cong
+        2048 -> R.drawable.food_2048_mam_doc_lap
+        else -> null
     }
 }
 

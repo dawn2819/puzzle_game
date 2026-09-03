@@ -256,7 +256,7 @@ fun PlayThaSuaScreen(
                             // Vẽ gợn sóng nghệ thuật hoặc sọc ngang
                         }
 
-                        // Vẽ các ô sông
+                        // Vẽ các ô sông tĩnh
                         for (r in 0 until 7) {
                             for (c in 0 until 5) {
                                 val x = cellW * c
@@ -265,7 +265,6 @@ fun PlayThaSuaScreen(
                                 val isObstacle = obstacles.contains(Pair(r, c))
                                 val isLeech = leeches.contains(Pair(r, c))
 
-                                // Bờ sông: Hàng 0 và Hàng 6
                                 val isBank = r == 0 || r == 6
 
                                 Box(
@@ -276,8 +275,8 @@ fun PlayThaSuaScreen(
                                         .clip(RoundedCornerShape(6.dp))
                                         .background(
                                             when {
-                                                isBank -> Color(0xFFC8E6C9) // Bờ cỏ xanh lá mượt
-                                                isObstacle -> Color(0xFF8D6E63).copy(alpha = 0.3f) // Bụi sậy nâu đất
+                                                isBank -> Color(0xFFC8E6C9)
+                                                isObstacle -> Color(0xFF8D6E63).copy(alpha = 0.3f)
                                                 else -> Color.Transparent
                                             }
                                         )
@@ -287,7 +286,6 @@ fun PlayThaSuaScreen(
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable {
-                                            // Cho phép di chuyển bằng cách nhấn thẳng vào ô cạnh bên
                                             val dr = r - playerPos.first
                                             val dc = c - playerPos.second
                                             if (kotlin.math.abs(dr) + kotlin.math.abs(dc) == 1) {
@@ -297,19 +295,37 @@ fun PlayThaSuaScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (isObstacle) {
-                                        Text("🌾", fontSize = 18.sp) // Bụi lau sậy cản đường
-                                    }
-                                    if (isPlayer) {
-                                        Text("👦", fontSize = 20.sp) // Cậu bé lội sông
+                                        Text("🌾", fontSize = 18.sp)
                                     }
                                     if (isLeech) {
-                                        Text("🦟", fontSize = 18.sp) // Con đỉa
+                                        Text("🦟", fontSize = 18.sp)
                                     }
                                     if (r == 0 && !isObstacle && !isPlayer && !isLeech) {
                                         Text("🏁 Đích", fontSize = 10.sp, color = BambooGreen, fontWeight = FontWeight.Bold)
                                     }
                                 }
                             }
+                        }
+
+                        // Vẽ Người chơi động có chuyển động trượt lò xo (Spring Physics)
+                        val playerX by animateDpAsState(
+                            targetValue = cellW * playerPos.second,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
+                            label = "player_x"
+                        )
+                        val playerY by animateDpAsState(
+                            targetValue = cellH * playerPos.first,
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
+                            label = "player_y"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .offset(x = playerX, y = playerY)
+                                .size(cellW, cellH),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("👦", fontSize = 20.sp)
                         }
                     }
                 }

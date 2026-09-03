@@ -19,6 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.engine.EngineSokoban
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
+import com.example.puzzlegame.R
 import com.example.puzzlegame.ui.components.ConfettiEffect
 import com.example.puzzlegame.theme.*
 import com.example.puzzlegame.audio.AudioManager
@@ -73,6 +77,7 @@ fun PlaySokobanScreen(
     val coroutineScope = rememberCoroutineScope()
     var playerOffsetX by remember { mutableStateOf(0.dp) }
     var playerOffsetY by remember { mutableStateOf(0.dp) }
+    var playerDirection by remember { mutableStateOf("down") }
 
     // Đồng bộ state
     fun syncState() {
@@ -203,6 +208,13 @@ fun PlaySokobanScreen(
 
     fun makeMove(dRow: Int, dCol: Int) {
         if (isPaused) return
+        playerDirection = when {
+            dRow == -1 -> "up"
+            dRow == 1 -> "down"
+            dCol == -1 -> "left"
+            dCol == 1 -> "right"
+            else -> playerDirection
+        }
         val moved = engine?.move(dRow, dCol) ?: false
         if (moved) {
             audioManager.playClick()
@@ -446,84 +458,18 @@ fun PlaySokobanScreen(
                                             ) {
                                                 when (initialCell) {
                                                      EngineSokoban.WALL -> {
-                                                         Canvas(modifier = Modifier.fillMaxSize()) {
-                                                             val w = size.width
-                                                             val h = size.height
-                                                             val corner = 4.dp.toPx()
-                                                             // Nền xanh tre trúc di sản
-                                                             drawRoundRect(
-                                                                 color = Color(0xFF3E6137),
-                                                                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                             )
-                                                             // Vẽ các sọc dọc thân tre trúc 3D tinh tế
-                                                             val strokeW = 1.5.dp.toPx()
-                                                             val segmentCount = 4
-                                                             val segW = w / segmentCount
-                                                             for (i in 1 until segmentCount) {
-                                                                 drawLine(
-                                                                     color = Color(0x33FFFFFF), // Sọc sáng tạo bóng
-                                                                     start = Offset(i * segW, 0f),
-                                                                     end = Offset(i * segW, h),
-                                                                     strokeWidth = strokeW
-                                                                 )
-                                                                 drawLine(
-                                                                     color = Color(0x22000000), // Sọc tối tạo chiều sâu
-                                                                     start = Offset(i * segW + strokeW, 0f),
-                                                                     end = Offset(i * segW + strokeW, h),
-                                                                     strokeWidth = strokeW
-                                                                 )
-                                                             }
-                                                             // Vẽ lóng tre ngang đặc trưng
-                                                             drawLine(
-                                                                 color = Color(0xFF2C4F27),
-                                                                 start = Offset(0f, h * 0.35f),
-                                                                 end = Offset(w, h * 0.35f),
-                                                                 strokeWidth = 2.dp.toPx()
-                                                             )
-                                                             drawLine(
-                                                                 color = Color(0xFF2C4F27),
-                                                                 start = Offset(0f, h * 0.7f),
-                                                                 end = Offset(w, h * 0.7f),
-                                                                 strokeWidth = 2.dp.toPx()
-                                                             )
-                                                         }
+                                                         Image(
+                                                             painter = painterResource(id = R.drawable.soko_wall),
+                                                             contentDescription = null,
+                                                             modifier = Modifier.fillMaxSize()
+                                                         )
                                                      }
                                                      EngineSokoban.GOAL, EngineSokoban.PLAYER_ON_GOAL -> {
-                                                         Canvas(modifier = Modifier.fillMaxSize()) {
-                                                             val w = size.width
-                                                             val h = size.height
-                                                             val cx = w / 2
-                                                             val cy = h / 2
-                                                             val outerRadius = w * 0.3f
-                                                             val innerRadius = w * 0.12f
-                                                             val path = androidx.compose.ui.graphics.Path().apply {
-                                                                 var angle = -Math.PI / 2
-                                                                 val nextAngle = Math.PI / 5
-                                                                 moveTo(
-                                                                     (cx + outerRadius * Math.cos(angle)).toFloat(),
-                                                                     (cy + outerRadius * Math.sin(angle)).toFloat()
-                                                                 )
-                                                                 for (step in 0 until 10) {
-                                                                     angle += nextAngle
-                                                                     val r = if (step % 2 == 0) innerRadius else outerRadius
-                                                                     lineTo(
-                                                                         (cx + r * Math.cos(angle)).toFloat(),
-                                                                         (cy + r * Math.sin(angle)).toFloat()
-                                                                     )
-                                                                 }
-                                                                 close()
-                                                             }
-                                                             // Vẽ ngôi sao vàng di sản lấp lánh (Star Gold)
-                                                             drawPath(
-                                                                 path = path,
-                                                                 color = Color(0xFFEAEA00).copy(alpha = 0.5f)
-                                                             )
-                                                             drawPath(
-                                                                 path = path,
-                                                                 color = Color(0xFFCDCD00),
-                                                                 style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5.dp.toPx())
-                                                             )
-                                                         }
+                                                         Image(
+                                                             painter = painterResource(id = R.drawable.soko_target),
+                                                             contentDescription = null,
+                                                             modifier = Modifier.fillMaxSize()
+                                                         )
                                                      }
                                                     else -> {
                                                         Box(
@@ -570,58 +516,21 @@ fun PlaySokobanScreen(
                                                     .padding(2.dp),
                                                 contentAlignment = Alignment.Center
                                             ) {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.soko_box),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.fillMaxSize()
+                                                )
                                                 if (isDocked) {
-                                                    Canvas(modifier = Modifier.fillMaxSize()) {
-                                                        val w = size.width
-                                                        val h = size.height
-                                                        val corner = 4.dp.toPx()
-                                                        // Nền kiện hàng gỗ màu gỗ
-                                                        drawRoundRect(
-                                                            color = Color(0xFFD2B48C),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
-                                                        // Họa tiết đan chéo viền nâu đậm
-                                                        val strokeWidth = 2.dp.toPx()
-                                                        drawRoundRect(
-                                                            color = Color(0xFFEAEA00), // Gold border for docked state
-                                                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth * 1.5f),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
-                                                        // Các đường gân chéo kiện hàng gỗ
-                                                        drawLine(Color(0xFF5D403B), Offset(w * 0.15f, h * 0.15f), Offset(w * 0.85f, h * 0.85f), strokeWidth)
-                                                        drawLine(Color(0xFF5D403B), Offset(w * 0.85f, h * 0.15f), Offset(w * 0.15f, h * 0.85f), strokeWidth)
-                                                        // Tâm hình vuông gỗ nhỏ
-                                                        drawRoundRect(
-                                                            color = Color(0xFF5D403B),
-                                                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
-                                                        // Vẽ ngôi sao vàng di sản lấp lánh (Star Gold)
-                                                        drawCircle(Color(0xFFEAEA00), radius = w * 0.18f)
-                                                        drawCircle(Color(0xFFCDCD00), radius = w * 0.18f, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.dp.toPx()))
-                                                    }
-                                                } else {
-                                                    Canvas(modifier = Modifier.fillMaxSize()) {
-                                                        val w = size.width
-                                                        val h = size.height
-                                                        val corner = 4.dp.toPx()
-                                                        drawRoundRect(
-                                                            color = Color(0xFFD2B48C),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
-                                                        val strokeWidth = 2.dp.toPx()
-                                                        drawRoundRect(
-                                                            color = Color(0xFF5D403B),
-                                                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
-                                                        drawLine(Color(0xFF5D403B), Offset(w * 0.15f, h * 0.15f), Offset(w * 0.85f, h * 0.85f), strokeWidth)
-                                                        drawLine(Color(0xFF5D403B), Offset(w * 0.85f, h * 0.15f), Offset(w * 0.15f, h * 0.85f), strokeWidth)
-                                                        drawRoundRect(
-                                                            color = Color(0xFF5D403B),
-                                                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth),
-                                                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner)
-                                                        )
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .align(Alignment.BottomEnd)
+                                                            .size(16.dp)
+                                                            .background(Color(0xFF2E7D32), CircleShape)
+                                                            .border(1.dp, Color.White, CircleShape),
+                                                        contentAlignment = Alignment.Center
+                                                    ) {
+                                                        Text("✓", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                                     }
                                                 }
                                             }
@@ -674,57 +583,17 @@ fun PlaySokobanScreen(
                                             .padding(2.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .clip(CircleShape)
-                                                .background(
-                                                    Brush.linearGradient(
-                                                        colors = listOf(FlagRed, LacquerRed)
-                                                    )
-                                                )
-                                                .border(2.dp, StarGold, CircleShape),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Box(
-                                                modifier = Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                // Vẽ nón lá chồng đè lên trên avatar
-                                                Canvas(modifier = Modifier.fillMaxSize().padding(2.dp)) {
-                                                    val w = size.width
-                                                    val h = size.height
-                                                    val hatPath = androidx.compose.ui.graphics.Path().apply {
-                                                        moveTo(w / 2, h * 0.1f) // Đỉnh nón
-                                                        lineTo(w * 0.85f, h * 0.45f) // Mép phải
-                                                        lineTo(w * 0.15f, h * 0.45f) // Mép trái
-                                                        close()
-                                                    }
-                                                    drawPath(
-                                                        path = hatPath,
-                                                        brush = Brush.verticalGradient(
-                                                            colors = listOf(Color(0xFFFFF9EA), Color(0xFFEAEA00)) // Màu nón vàng nhạt sáng
-                                                        )
-                                                    )
-                                                    drawPath(
-                                                        path = hatPath,
-                                                        color = Color(0xFFCDCD00),
-                                                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.dp.toPx())
-                                                    )
-                                                    // Vẽ sọc dọc nón lá
-                                                    drawLine(Color(0x33000000), Offset(w/2, h*0.1f), Offset(w*0.5f, h*0.45f), 1.dp.toPx())
-                                                    drawLine(Color(0x33000000), Offset(w/2, h*0.1f), Offset(w*0.35f, h*0.45f), 1.dp.toPx())
-                                                    drawLine(Color(0x33000000), Offset(w/2, h*0.1f), Offset(w*0.65f, h*0.45f), 1.dp.toPx())
-                                                }
-
-                                                // Emoji khuôn mặt sĩ phu Việt bên dưới nón
-                                                Text(
-                                                    text = "🤠",
-                                                    fontSize = (cellSize.value * 0.38f).sp,
-                                                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = (cellSize.value * 0.05f).dp)
-                                                )
-                                            }
-                                        }
+                                        val playerDrawableId = when (playerDirection) {
+                                             "up" -> R.drawable.soko_player_up
+                                             "left" -> R.drawable.soko_player_left
+                                             "right" -> R.drawable.soko_player_right
+                                             else -> R.drawable.soko_player_down
+                                         }
+                                         Image(
+                                             painter = painterResource(id = playerDrawableId),
+                                             contentDescription = null,
+                                             modifier = Modifier.fillMaxSize()
+                                         )
                                     }
                                 }
                             }
