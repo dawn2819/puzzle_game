@@ -38,11 +38,11 @@ val PrimaryNeon = FlagRed
 val SecondaryNeon = StarGold
 val TertiaryNeon = BambooGreen
 
-// Glassmorphism cards (adapted for heritage theme)
-val GlassDark = Color(0x1F282522)
-val GlassBorderDark = Color(0x337D6460)
-val GlassLight = Color(0x66FFF9EA)
-val GlassBorderLight = Color(0x66916F6A)
+// Glassmorphism cards (Tăng độ đục để chống chìm chữ / Low Contrast trên nền ảnh chi tiết)
+val GlassDark = Color(0xF21F1B18)
+val GlassBorderDark = Color(0x66D4AF37)
+val GlassLight = Color(0xF5FFFBEB)
+val GlassBorderLight = Color(0x66B40006)
 
 // Game-specific colors:
 // 2048:

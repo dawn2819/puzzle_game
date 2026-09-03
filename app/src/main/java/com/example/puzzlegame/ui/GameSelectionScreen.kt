@@ -69,7 +69,16 @@ fun GameSelectionScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("CHỌN TRÒ CHƠI", fontWeight = FontWeight.Bold, letterSpacing = 2.sp) },
+                    title = {
+                        Text(
+                            text = "CHỌN TRÒ CHƠI",
+                            fontFamily = OngDoFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 2.sp,
+                            fontSize = 22.sp,
+                            color = FlagRed
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             audioManager.playClick()
@@ -114,7 +123,14 @@ fun GameSelectionScreen(
                                 audioManager.playClick()
                                 selectedTab = 0
                             },
-                            text = { Text("Quốc Tế", fontWeight = FontWeight.Bold) }
+                            text = {
+                                Text(
+                                    text = "Quốc Tế",
+                                    fontFamily = OngDoFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            }
                         )
                         Tab(
                             selected = selectedTab == 1,
@@ -122,7 +138,14 @@ fun GameSelectionScreen(
                                 audioManager.playClick()
                                 selectedTab = 1
                             },
-                            text = { Text("Dân Gian", fontWeight = FontWeight.Bold) }
+                            text = {
+                                Text(
+                                    text = "Dân Gian",
+                                    fontFamily = OngDoFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            }
                         )
                         Tab(
                             selected = selectedTab == 2,
@@ -130,7 +153,14 @@ fun GameSelectionScreen(
                                 audioManager.playClick()
                                 selectedTab = 2
                             },
-                            text = { Text("Trí Tuệ", fontWeight = FontWeight.Bold) }
+                            text = {
+                                Text(
+                                    text = "Trí Tuệ",
+                                    fontFamily = OngDoFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            }
                         )
                     }
 
@@ -250,6 +280,16 @@ fun GameSelectionScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 contentPadding = PaddingValues(horizontal = 16.dp)
                             ) {
+                                item {
+                                    GameCard(
+                                        title = "VƯỢT HỔ",
+                                        description = "Nhảy né hổ mập phong cách Dino",
+                                        onClick = {
+                                            audioManager.playClick()
+                                            onNavigate(PlayDinoRunner)
+                                        }
+                                    )
+                                }
                                 item {
                                     GameCard(
                                         title = "THẢ ĐỈA",

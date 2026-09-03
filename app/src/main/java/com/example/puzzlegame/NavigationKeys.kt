@@ -3,6 +3,7 @@ package com.example.puzzlegame
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
+@Serializable data object Splash : NavKey
 @Serializable data object Main : NavKey
 @Serializable data object SelectGame : NavKey
 @Serializable data object Options : NavKey
@@ -30,4 +31,5 @@ data class PlayNonogram(val levelIndex: Int, val isRestore: Boolean = false) : N
 @Serializable data object PlaySequence : NavKey
 @Serializable data object PlayDapNieu : NavKey
 @Serializable data object PlayNemCon : NavKey
+@Serializable data object PlayDinoRunner : NavKey
 @Serializable data object Museum : NavKey

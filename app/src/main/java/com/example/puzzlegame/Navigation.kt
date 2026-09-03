@@ -1,5 +1,7 @@
 package com.example.puzzlegame
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -10,12 +12,57 @@ import com.example.puzzlegame.ui.*
 fun MainNavigation(
     onDarkModeChanged: (Boolean) -> Unit
 ) {
-    val backStack = rememberNavBackStack(Main)
+    val backStack = rememberNavBackStack(Splash)
 
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
+        transitionSpec = {
+            (slideInHorizontally(
+                animationSpec = tween(320),
+                initialOffsetX = { fullWidth -> fullWidth }
+            ) + fadeIn(animationSpec = tween(320)))
+                .togetherWith(
+                    slideOutHorizontally(
+                        animationSpec = tween(320),
+                        targetOffsetX = { fullWidth -> -fullWidth / 4 }
+                    ) + fadeOut(animationSpec = tween(260))
+                )
+        },
+        popTransitionSpec = {
+            (slideInHorizontally(
+                animationSpec = tween(320),
+                initialOffsetX = { fullWidth -> -fullWidth / 4 }
+            ) + fadeIn(animationSpec = tween(320)))
+                .togetherWith(
+                    slideOutHorizontally(
+                        animationSpec = tween(320),
+                        targetOffsetX = { fullWidth -> fullWidth }
+                    ) + fadeOut(animationSpec = tween(260))
+                )
+        },
+        predictivePopTransitionSpec = { _ ->
+            (slideInHorizontally(
+                animationSpec = tween(320),
+                initialOffsetX = { fullWidth -> -fullWidth / 4 }
+            ) + fadeIn(animationSpec = tween(320)))
+                .togetherWith(
+                    slideOutHorizontally(
+                        animationSpec = tween(320),
+                        targetOffsetX = { fullWidth -> fullWidth }
+                    ) + fadeOut(animationSpec = tween(260))
+                )
+        },
         entryProvider = entryProvider {
+            // 0. Màn hình khởi động Splash Screen (Logo Trống Đồng xoay tròn thay thế loading)
+            entry<Splash> {
+                SplashScreen(
+                    onFinishLoading = {
+                        backStack.removeLastOrNull()
+                        backStack.add(Main)
+                    }
+                )
+            }
             // 1. Màn hình chính
             entry<Main> {
                 MainMenuScreen(onNavigate = { navKey -> backStack.add(navKey) })
@@ -112,7 +159,11 @@ fun MainNavigation(
             entry<PlayNemCon> {
                 PlayNemConScreen(onBack = { backStack.removeLastOrNull() })
             }
-            // 19. Màn Bảo tàng Hồn Việt
+            // 19. Màn chơi Vượt Hổ (Dino Runner)
+            entry<PlayDinoRunner> {
+                PlayDinoRunnerScreen(onBack = { backStack.removeLastOrNull() })
+            }
+            // 20. Màn Bảo tàng Hồn Việt
             entry<Museum> {
                 MuseumScreen(onBack = { backStack.removeLastOrNull() })
             }

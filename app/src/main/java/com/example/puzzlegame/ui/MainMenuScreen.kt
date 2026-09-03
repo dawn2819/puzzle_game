@@ -108,38 +108,69 @@ fun MainMenuScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- LOGO TIÊU ĐỀ ---
-            Column(
+            // --- LOGO TIÊU ĐỀ HỒN VIỆT ---
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp)
+                    .padding(vertical = 8.dp)
                     .scale(titleScale),
-                horizontalAlignment = Alignment.CenterHorizontally
+                contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo_hon_viet),
-                    contentDescription = "Hồn Việt Logo",
-                    contentScale = ContentScale.Fit,
+                // Vầng sương mây trắng ngà đỡ phía sau logo, tôn rõ từng nét cọ đỏ son & mực đen
+                Box(
                     modifier = Modifier
-                        .height(110.dp)
-                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(0.92f)
+                        .height(135.dp)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.60f),
+                                    Color(0xFFFFFBEB).copy(alpha = 0.38f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Vietnamese Puzzle Universe",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = EarthyBrown.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 2.sp
-                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo_hon_viet),
+                        contentDescription = "Hồn Việt Logo",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .height(118.dp)
+                            .padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Vietnamese Puzzle Universe",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = OngDoFontFamily,
+                        color = Color(0xFF3E1F0A),
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(
+                                color = Color.White.copy(alpha = 0.85f),
+                                offset = Offset(0f, 1f),
+                                blurRadius = 4f
+                            )
+                        ),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 2.sp
+                    )
+                }
             }
 
             // --- PROFILE USER CARD (XP, COINS, LEVEL) ---
+            // Thẻ nền kem ngà ấm áp, chống chìm chữ hoàn toàn trên nền cây đa
             GlassCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .wrapContentHeight(),
+                cornerRadius = 18.dp,
+                borderWidth = 1.5.dp
             ) {
                 Column(
                     modifier = Modifier
@@ -155,21 +186,35 @@ fun MainMenuScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .background(FlagRed, CircleShape),
+                                    .size(40.dp)
+                                    .background(FlagRed, CircleShape)
+                                    .border(1.5.dp, Color(0xFFFEF08A), CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "$level",
                                     fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 16.sp,
+                                    fontFamily = OngDoFontFamily,
+                                    fontSize = 18.sp,
                                     color = Color.White
                                 )
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
                             Column {
-                                Text("Cấp độ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
-                                Text("Kẻ Sĩ Trí Tuệ", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = EarthyBrown)
+                                Text(
+                                    text = "CẤP ĐỘ",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = OngDoFontFamily,
+                                    color = Color(0xFF78350F)
+                                )
+                                Text(
+                                    text = "Kẻ Sĩ Trí Tuệ",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontFamily = OngDoFontFamily,
+                                    color = FlagRed
+                                )
                             }
                         }
 
@@ -177,15 +222,16 @@ fun MainMenuScreen(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(StarGold.copy(alpha = 0.3f))
-                                .border(1.dp, StarGold, RoundedCornerShape(16.dp))
-                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                                .background(Color(0xFFFEF08A))
+                                .border(1.5.dp, Color(0xFFD97706), RoundedCornerShape(16.dp))
+                                .padding(horizontal = 14.dp, vertical = 6.dp)
                         ) {
                             Text(
                                 text = "$coins 🪙",
+                                fontFamily = OngDoFontFamily,
                                 fontWeight = FontWeight.ExtraBold,
-                                fontSize = 15.sp,
-                                color = EarthyBrown
+                                fontSize = 16.sp,
+                                color = Color(0xFF78350F)
                             )
                         }
                     }
@@ -196,17 +242,29 @@ fun MainMenuScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Điểm kinh nghiệm (XP)", fontSize = 12.sp, color = EarthyBrown)
-                            Text("$xp / $xpTarget XP", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = FlagRed)
+                            Text(
+                                text = "Điểm kinh nghiệm (XP)",
+                                fontSize = 13.sp,
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF78350F)
+                            )
+                            Text(
+                                text = "$xp / $xpTarget XP",
+                                fontSize = 13.sp,
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = FlagRed
+                            )
                         }
                         LinearProgressIndicator(
                             progress = xp.toFloat() / xpTarget,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(8.dp)
+                                .height(10.dp)
                                 .clip(CircleShape),
                             color = FlagRed,
-                            trackColor = OutlineBrown.copy(alpha = 0.2f)
+                            trackColor = Color(0xFFE2D5C3)
                         )
                     }
                 }
@@ -253,8 +311,16 @@ fun MainMenuScreen(
                     Text(
                         text = "⏳ CHƠI TIẾP VÁN DỞ DANG (" + prefs.getContinueGameType() + ")",
                         fontWeight = FontWeight.ExtraBold,
-                        color = EarthyBrown,
-                        fontSize = 14.sp
+                        fontFamily = OngDoFontFamily,
+                        color = Color(0xFFFFFBEB),
+                        style = LocalTextStyle.current.copy(
+                            shadow = Shadow(
+                                color = Color(0xFF1B1108),
+                                offset = Offset(1.5f, 1.5f),
+                                blurRadius = 4f
+                            )
+                        ),
+                        fontSize = 17.sp
                     )
                 }
             }
@@ -287,8 +353,35 @@ fun MainMenuScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text("TRÒ CHƠI", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = FlagRed)
-                            Text("Hệ sinh thái game", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            Text(
+                                text = "TRÒ CHƠI",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 24.sp,
+                                color = Color(0xFFFFD54F), // Dát vàng hoàng kim
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color(0xFF260D00),
+                                        offset = Offset(2f, 2f),
+                                        blurRadius = 6f
+                                    )
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Hệ sinh thái game",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp,
+                                color = Color(0xFFFFFBEB),
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color.Black.copy(alpha = 0.9f),
+                                        offset = Offset(1f, 1f),
+                                        blurRadius = 4f
+                                    )
+                                )
+                            )
                         }
                     }
 
@@ -312,8 +405,35 @@ fun MainMenuScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text("BẢO TÀNG", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = BambooGreen)
-                            Text("Khám phá văn hóa", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            Text(
+                                text = "BẢO TÀNG",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 24.sp,
+                                color = Color(0xFFA7F3D0), // Ngọc bích sáng ánh vàng
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color(0xFF0F2414),
+                                        offset = Offset(2f, 2f),
+                                        blurRadius = 6f
+                                    )
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Khám phá văn hóa",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp,
+                                color = Color(0xFFFFFBEB),
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color.Black.copy(alpha = 0.9f),
+                                        offset = Offset(1f, 1f),
+                                        blurRadius = 4f
+                                    )
+                                )
+                            )
                         }
                     }
                 }
@@ -325,7 +445,7 @@ fun MainMenuScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp)
+                            .height(84.dp)
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(Scores)
@@ -342,15 +462,41 @@ fun MainMenuScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(horizontal = 12.dp)
                         ) {
-                            Text("BẢNG ĐIỂM", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
-                            Text("Thành tích cá nhân", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            Text(
+                                text = "BẢNG ĐIỂM",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 21.sp,
+                                color = Color(0xFFFFE082), // Vàng kim sáng
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color(0xFF260D00),
+                                        offset = Offset(2f, 2f),
+                                        blurRadius = 5f
+                                    )
+                                )
+                            )
+                            Text(
+                                text = "Thành tích cá nhân",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color(0xFFFFFBEB),
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color.Black.copy(alpha = 0.9f),
+                                        offset = Offset(1f, 1f),
+                                        blurRadius = 4f
+                                    )
+                                )
+                            )
                         }
                     }
 
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp)
+                            .height(84.dp)
                             .clickable {
                                 audioManager.playClick()
                                 onNavigate(Options)
@@ -367,8 +513,34 @@ fun MainMenuScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(horizontal = 12.dp)
                         ) {
-                            Text("CÀI ĐẶT", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = EarthyBrown)
-                            Text("Âm lượng & Giao diện", fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                            Text(
+                                text = "CÀI ĐẶT",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 21.sp,
+                                color = Color(0xFFFFE082), // Vàng kim sáng
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color(0xFF260D00),
+                                        offset = Offset(2f, 2f),
+                                        blurRadius = 5f
+                                    )
+                                )
+                            )
+                            Text(
+                                text = "Âm lượng & Giao diện",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color(0xFFFFFBEB),
+                                style = LocalTextStyle.current.copy(
+                                    shadow = Shadow(
+                                        color = Color.Black.copy(alpha = 0.9f),
+                                        offset = Offset(1f, 1f),
+                                        blurRadius = 4f
+                                    )
+                                )
+                            )
                         }
                     }
                 }

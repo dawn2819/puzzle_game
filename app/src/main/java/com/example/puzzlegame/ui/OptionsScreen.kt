@@ -15,6 +15,7 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 import com.example.puzzlegame.audio.AudioManager
+import com.example.puzzlegame.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +41,15 @@ fun OptionsScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("CÀI ĐẶT", fontWeight = FontWeight.Bold) },
+                    title = {
+                        Text(
+                            text = "CÀI ĐẶT",
+                            fontFamily = OngDoFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 22.sp,
+                            color = FlagRed
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             audioManager.playClick()
@@ -76,16 +85,22 @@ fun OptionsScreen(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 "Âm lượng hiệu ứng",
-                                fontSize = 16.sp,
+                                fontFamily = OngDoFontFamily,
+                                fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                color = FlagRed
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("0%", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                                Text(
+                                    "0%",
+                                    fontFamily = OngDoFontFamily,
+                                    fontSize = 13.sp,
+                                    color = Color(0xFF78350F)
+                                )
                                 Slider(
                                     value = volume,
                                     onValueChange = { newVol ->
@@ -99,7 +114,12 @@ fun OptionsScreen(
                                     },
                                     modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
                                 )
-                                Text("100%", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                                Text(
+                                    "100%",
+                                    fontFamily = OngDoFontFamily,
+                                    fontSize = 13.sp,
+                                    color = Color(0xFF78350F)
+                                )
                             }
                         }
 
@@ -114,14 +134,16 @@ fun OptionsScreen(
                             Column {
                                 Text(
                                     "Chế độ tối (Dark Mode)",
-                                    fontSize = 16.sp,
+                                    fontFamily = OngDoFontFamily,
+                                    fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = Color(0xFF78350F)
                                 )
                                 Text(
                                     "Giúp dịu mắt và tiết kiệm pin",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                    fontFamily = OngDoFontFamily,
+                                    fontSize = 13.sp,
+                                    color = EarthyBrown.copy(alpha = 0.8f)
                                 )
                             }
                             Switch(
@@ -150,7 +172,12 @@ fun OptionsScreen(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("THOÁT TRÒ CHƠI", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "THOÁT TRÒ CHƠI",
+                        fontFamily = OngDoFontFamily,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }

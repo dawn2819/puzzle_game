@@ -17,6 +17,7 @@ import com.example.puzzlegame.data.GamePreferences
 import com.example.puzzlegame.ui.components.GlassCard
 import com.example.puzzlegame.ui.components.PremiumBackground
 import com.example.puzzlegame.audio.AudioManager
+import com.example.puzzlegame.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +42,15 @@ fun ScoresScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("BẢNG ĐIỂM", fontWeight = FontWeight.Bold) },
+                    title = {
+                        Text(
+                            text = "BẢNG ĐIỂM",
+                            fontFamily = OngDoFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 22.sp,
+                            color = FlagRed
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             audioManager.playClick()
@@ -80,7 +89,14 @@ fun ScoresScreen(
                                 audioManager.playClick()
                                 selectedTab = index
                             },
-                            text = { Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp) }
+                            text = {
+                                Text(
+                                    text = title,
+                                    fontFamily = OngDoFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            }
                         )
                     }
                 }
@@ -102,9 +118,32 @@ fun ScoresScreen(
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Chế độ/Kích cỡ", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1.5f))
-                            Text("Gần nhất", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
-                            Text("Cao nhất", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f), textAlign = TextAlign.End, color = MaterialTheme.colorScheme.primary)
+                            Text(
+                                "Chế độ/Kích cỡ",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                modifier = Modifier.weight(1.5f),
+                                color = Color(0xFF78350F)
+                            )
+                            Text(
+                                "Gần nhất",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.End,
+                                color = Color(0xFF78350F)
+                            )
+                            Text(
+                                "Cao nhất",
+                                fontFamily = OngDoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.End,
+                                color = FlagRed
+                            )
                         }
 
                         Divider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.15f))
@@ -171,15 +210,30 @@ fun ScoreRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 16.sp, modifier = Modifier.weight(1.5f), fontWeight = FontWeight.Medium)
-        Text("$lastScore", fontSize = 16.sp, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
         Text(
-            "$highScore",
+            text = label,
             fontSize = 16.sp,
+            fontFamily = OngDoFontFamily,
+            modifier = Modifier.weight(1.5f),
+            fontWeight = FontWeight.Medium,
+            color = EarthyBrown
+        )
+        Text(
+            text = "$lastScore",
+            fontSize = 16.sp,
+            fontFamily = OngDoFontFamily,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End,
+            color = EarthyBrown
+        )
+        Text(
+            text = "$highScore",
+            fontSize = 16.sp,
+            fontFamily = OngDoFontFamily,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.End,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.secondary
+            color = FlagRed
         )
     }
 }

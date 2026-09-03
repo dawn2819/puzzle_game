@@ -290,6 +290,9 @@ fun PremiumBackground(
             )
         }
 
+        // Lớp mây trôi chân thực đa tầng bồng bềnh lướt qua (Slide 20)
+        RealisticClouds(modifier = Modifier.fillMaxSize())
+
         Canvas(modifier = Modifier.fillMaxSize()) {
             val width = size.width
             val height = size.height
